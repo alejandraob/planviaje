@@ -1,0 +1,73 @@
+### Backend API Tests - Authentication
+### Base URL
+@baseUrl = http://localhost:3001/api
+
+# Variable para el token - Actualiza esto después de hacer login
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwibm9tYnJlIjoiSnVhbiIsImFwZWxsaWRvIjoiUMOpcmV6IiwiaWF0IjoxNzYwOTY1MDgyLCJleHAiOjE3NjEwNTE0ODJ9.vQxWDZx4LqlqjcTWA8UOF0vAZNuRJJErYOiXellcY3Q
+
+###
+### ==================== DEVELOPMENT LOGIN (TESTING ONLY) ====================
+###
+
+### DEV LOGIN - Login sin Firebase (SOLO PARA TESTING)
+# Ya existe un usuario creado: test@example.com
+# Este endpoint NO verifica password - solo busca el usuario por email
+# INSTRUCCIONES:
+# 1. Ejecuta esta request haciendo clic en "Send Request"
+# 2. Copia el "accessToken" de la respuesta
+# 3. Pégalo arriba en la línea 5 reemplazando YOUR_ACCESS_TOKEN_HERE
+POST {{baseUrl}}/auth/dev-login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "cualquier_cosa"
+}
+
+###
+### ==================== AUTHENTICATED ENDPOINTS ====================
+###
+
+### Get current user info
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+
+### Refresh access token
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwibm9tYnJlIjoiSnVhbiIsImFwZWxsaWRvIjoiUMOpcmV6IiwiaWF0IjoxNzYwOTY0Nzk5LCJleHAiOjE3NjEwNTExOTl9.KNyR3FeXBN55Xe0YEMP7pC_xsmc30akP6foekfN4foY"
+}
+
+### Logout
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{token}}
+
+###
+### ==================== REGISTER (REQUIERE FIREBASE - SKIP) ====================
+###
+
+### Register a new user (with Firebase - SKIP if Firebase not configured)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "nuevo@example.com",
+  "password": "Password123!",
+  "nombre": "Maria",
+  "apellido": "González",
+  "telefono": "+541198765432"
+}
+
+###
+### ==================== PRODUCTION LOGIN (WITH FIREBASE - SKIP) ====================
+###
+
+### Login with Firebase ID Token (Production method)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "idToken": "FIREBASE_ID_TOKEN_HERE"
+}

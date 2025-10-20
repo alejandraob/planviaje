@@ -1,0 +1,147 @@
+### Backend API Tests - Viajes
+### Base URL
+@baseUrl = http://localhost:3001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwibm9tYnJlIjoiSnVhbiIsImFwZWxsaWRvIjoiUMOpcmV6IiwiaWF0IjoxNzYwOTY1MDgyLCJleHAiOjE3NjEwNTE0ODJ9.vQxWDZx4LqlqjcTWA8UOF0vAZNuRJJErYOiXellcY3Q
+
+### Health Check
+GET {{baseUrl}}/health
+
+###
+### ==================== VIAJES ENDPOINTS ====================
+###
+
+### 1. Create a new trip
+POST {{baseUrl}}/viajes
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "nombre": "Viaje a Bariloche 2025",
+  "tipo": "amigos",
+  "alcance": "nacional",
+  "fecha_inicio": "2025-12-15",
+  "fecha_fin": "2025-12-22",
+  "descripcion": "Viaje de fin de año a la Patagonia",
+  "max_miembros": 15,
+  "max_subgrupos": 5,
+  "max_franjas": 10
+}
+
+### 2. Get all my trips
+GET {{baseUrl}}/viajes
+Authorization: Bearer {{token}}
+
+### 3. Get all my trips with filters
+GET {{baseUrl}}/viajes?estado=planificacion&tipo=amigos&page=1&limit=10
+Authorization: Bearer {{token}}
+
+### 4. Get specific trip details
+GET {{baseUrl}}/viajes/1
+Authorization: Bearer {{token}}
+
+### 5. Update trip
+PUT {{baseUrl}}/viajes/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "nombre": "Viaje a Bariloche 2025 - Actualizado",
+  "descripcion": "Viaje de fin de año a la Patagonia - Versión actualizada",
+  "max_miembros": 20
+}
+
+### 6. Get trip statistics
+GET {{baseUrl}}/viajes/1/estadisticas
+Authorization: Bearer {{token}}
+
+### 7. Change trip state to "en_curso"
+PUT {{baseUrl}}/viajes/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "estado": "en_curso"
+}
+
+### 8. Delete trip (only principal admin, no members/expenses)
+DELETE {{baseUrl}}/viajes/1
+Authorization: Bearer {{token}}
+
+###
+### ==================== ERROR CASES ====================
+###
+
+### Invalid trip duration (>365 days)
+POST {{baseUrl}}/viajes
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "nombre": "Viaje muy largo",
+  "tipo": "individual",
+  "alcance": "internacional",
+  "fecha_inicio": "2025-01-01",
+  "fecha_fin": "2026-12-31",
+  "descripcion": "Este viaje excede el límite de 365 días"
+}
+
+### Missing required fields
+POST {{baseUrl}}/viajes
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "nombre": "Viaje incompleto"
+}
+
+### Invalid trip type
+POST {{baseUrl}}/viajes
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "nombre": "Viaje inválido",
+  "tipo": "invalido_tipo",
+  "alcance": "nacional",
+  "fecha_inicio": "2025-12-15",
+  "fecha_fin": "2025-12-22"
+}
+
+### fecha_fin before fecha_inicio
+POST {{baseUrl}}/viajes
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "nombre": "Viaje con fechas incorrectas",
+  "tipo": "amigos",
+  "alcance": "nacional",
+  "fecha_inicio": "2025-12-22",
+  "fecha_fin": "2025-12-15"
+}
+
+### Access trip without being a member
+GET {{baseUrl}}/viajes/999
+Authorization: Bearer {{token}}
+
+### Update trip without admin permissions
+PUT {{baseUrl}}/viajes/2
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "nombre": "Trying to update without permissions"
+}
+
+Respuesta
+
+{
+  "success": false,
+  "error": "Only admins can edit trips",
+  "stack": "Error: Only admins can edit trips\n    at editarViaje (C:\\masCursos\\planviaje\\backend\\src\\controllers\\viajesController.js:236:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)",
+  "details": {
+    "statusCode": 403,
+    "status": "fail",
+    "isOperational": true
+  }
+}

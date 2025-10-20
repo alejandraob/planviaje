@@ -1,0 +1,274 @@
+erDiagram
+    USUARIOS ||--o{ VIAJES : crea
+    USUARIOS ||--o{ MIEMBROS_VIAJE : participa
+    USUARIOS ||--o{ GASTOS : registra
+    USUARIOS ||--o{ PAGOS : realiza
+    USUARIOS ||--o{ DEUDAS : tiene
+    USUARIOS ||--o{ NOTIFICACIONES : recibe
+
+    VIAJES ||--o{ MIEMBROS_VIAJE : contiene
+    VIAJES ||--o{ CRONOGRAMA : tiene
+    VIAJES ||--o{ FRANJAS : contiene
+    VIAJES ||--o{ ALOJAMIENTOS : tiene
+    VIAJES ||--o{ GASTOS : registra
+    VIAJES ||--o{ SUBGRUPOS : contiene
+    VIAJES ||--o{ ACTIVIDADES : tiene
+    VIAJES ||--o{ DEUDAS : genera
+    VIAJES ||--o{ AUDITORIA : audita
+    VIAJES ||--o{ CONFIGURACION_VIAJE : tiene
+    VIAJES ||--o{ TASAS_CAMBIO : define
+
+    MIEMBROS_VIAJE ||--o{ GASTOS : crea
+    MIEMBROS_VIAJE ||--o{ DEUDAS : debe
+    MIEMBROS_VIAJE ||--o{ ALOJAMIENTOS : reserva
+    MIEMBROS_VIAJE ||--o{ SUBGRUPO_MIEMBROS : pertenece
+    MIEMBROS_VIAJE ||--o{ ACTIVIDADES : participa
+    MIEMBROS_VIAJE ||--o{ PAGOS : confirma
+
+    SUBGRUPOS ||--o{ SUBGRUPO_MIEMBROS : contiene
+    SUBGRUPOS ||--o{ GASTOS_SUBGRUPO : tiene
+
+    SUBGRUPO_MIEMBROS ||--o{ DEUDAS_SUBGRUPO : genera
+
+    FRANJAS ||--o{ ACTIVIDADES : contiene
+    FRANJAS ||--o{ ALOJAMIENTOS : asigna
+
+    GASTOS ||--o{ DEUDAS : genera
+    GASTOS ||--o{ GASTOS : referencia
+    GASTOS ||--o{ PAGOS : puede_pagar
+    GASTOS ||--o{ AUDITORIA : audita
+
+    GASTOS_SUBGRUPO ||--o{ DEUDAS_SUBGRUPO : genera
+
+    DEUDAS ||--o{ PAGOS : liquida
+    DEUDAS ||--o{ AUDITORIA : audita
+
+    ALOJAMIENTOS ||--o{ AUDITORIA : audita
+    ALOJAMIENTOS ||--o{ GASTOS : genera_gasto
+
+    ACTIVIDADES ||--o{ AUDITORIA : audita
+
+    USUARIOS : PK int id_usuario
+    USUARIOS : string email UNIQUE
+    USUARIOS : string telefono UNIQUE
+    USUARIOS : string nombre
+    USUARIOS : string apellido
+    USUARIOS : string avatar_url
+    USUARIOS : string cbu_argentina
+    USUARIOS : datetime fecha_registro
+    USUARIOS : datetime fecha_ultimo_login
+    USUARIOS : enum estado
+    USUARIOS : json preferencias_privacidad
+
+    VIAJES : PK int id_viaje
+    USUARIOS : FK int id_admin_principal
+    USUARIOS : FK int id_admin_secundario_actual
+    VIAJES : string nombre
+    VIAJES : enum tipo
+    VIAJES : enum alcance
+    VIAJES : date fecha_inicio
+    VIAJES : date fecha_fin
+    VIAJES : text descripcion
+    VIAJES : datetime fecha_creacion
+    VIAJES : enum estado
+    VIAJES : int max_miembros
+    VIAJES : int max_subgrupos
+    VIAJES : int max_franjas
+
+    MIEMBROS_VIAJE : PK int id_miembro_viaje
+    VIAJES : FK int id_viaje
+    USUARIOS : FK int id_usuario
+    MIEMBROS_VIAJE : enum rol
+    MIEMBROS_VIAJE : datetime fecha_union
+    MIEMBROS_VIAJE : boolean es_menor
+    USUARIOS : FK int id_responsable_legal
+    MIEMBROS_VIAJE : decimal presupuesto_maximo_diario
+    MIEMBROS_VIAJE : enum estado_participacion
+    MIEMBROS_VIAJE : datetime fecha_pausa_retiro
+    MIEMBROS_VIAJE : enum opcion_retiro_generoso
+
+    CRONOGRAMA : PK int id_cronograma
+    VIAJES : FK int id_viaje
+    CRONOGRAMA : date fecha_inicio
+    CRONOGRAMA : date fecha_fin
+    CRONOGRAMA : datetime fecha_creacion
+    CRONOGRAMA : enum estado
+
+    FRANJAS : PK int id_franja
+    VIAJES : FK int id_viaje
+    CRONOGRAMA : FK int id_cronograma
+    FRANJAS : string nombre_lugar
+    FRANJAS : date fecha_inicio
+    FRANJAS : date fecha_fin
+    FRANJAS : text descripcion
+    FRANJAS : int orden_secuencia
+    FRANJAS : enum estado_franja
+    FRANJAS : datetime fecha_creacion
+    USUARIOS : FK int id_usuario_creador
+
+    ALOJAMIENTOS : PK int id_alojamiento
+    VIAJES : FK int id_viaje
+    FRANJAS : FK int id_franja
+    ALOJAMIENTOS : string nombre
+    ALOJAMIENTOS : string link_reserva
+    ALOJAMIENTOS : date fecha_checkin
+    ALOJAMIENTOS : time hora_checkin
+    ALOJAMIENTOS : date fecha_checkout
+    ALOJAMIENTOS : time hora_checkout
+    ALOJAMIENTOS : text ubicacion_descripcion
+    ALOJAMIENTOS : enum estado_pago
+    ALOJAMIENTOS : decimal monto_total_ars
+    ALOJAMIENTOS : decimal monto_total_clp
+    ALOJAMIENTOS : decimal monto_total_usd
+    ALOJAMIENTOS : decimal monto_pagado_ars
+    ALOJAMIENTOS : decimal monto_faltante_ars
+    USUARIOS : FK int id_usuario_reserva
+    ALOJAMIENTOS : json miembros_asignados
+    ALOJAMIENTOS : datetime fecha_creacion
+    USUARIOS : FK int id_usuario_creador
+
+    ACTIVIDADES : PK int id_actividad
+    VIAJES : FK int id_viaje
+    FRANJAS : FK int id_franja
+    ACTIVIDADES : string nombre
+    ACTIVIDADES : date fecha
+    ACTIVIDADES : time hora
+    ACTIVIDADES : text descripcion
+    ACTIVIDADES : enum tipo_actividad
+    ACTIVIDADES : boolean es_paga
+    ACTIVIDADES : decimal valor_referencial_ars
+    ACTIVIDADES : decimal valor_referencial_clp
+    ACTIVIDADES : decimal valor_referencial_usd
+    ACTIVIDADES : enum estado_pago
+    USUARIOS : FK int id_usuario_pago
+    ACTIVIDADES : json miembros_asignados
+    ACTIVIDADES : enum estado_actividad
+    ACTIVIDADES : datetime fecha_creacion
+    USUARIOS : FK int id_usuario_creador
+
+    SUBGRUPOS : PK int id_subgrupo
+    VIAJES : FK int id_viaje
+    SUBGRUPOS : string nombre
+    SUBGRUPOS : text descripcion
+    USUARIOS : FK int id_representante
+    SUBGRUPOS : datetime fecha_creacion
+    SUBGRUPOS : enum estado
+
+    SUBGRUPO_MIEMBROS : PK int id_subgrupo_miembro
+    SUBGRUPOS : FK int id_subgrupo
+    MIEMBROS_VIAJE : FK int id_miembro_viaje
+    SUBGRUPO_MIEMBROS : datetime fecha_asignacion
+
+    GASTOS : PK int id_gasto
+    VIAJES : FK int id_viaje
+    USUARIOS : FK int id_usuario_creador
+    USUARIOS : FK int id_usuario_pagador
+    GASTOS : string descripcion
+    GASTOS : decimal monto_ars
+    GASTOS : decimal monto_clp
+    GASTOS : decimal monto_usd
+    GASTOS : enum categoria
+    GASTOS : enum tipo_gasto
+    GASTOS : enum tipo_division
+    GASTOS : date fecha
+    GASTOS : datetime timestamp_creacion
+    GASTOS : json miembros_asignados
+    GASTOS : int id_gasto_padre
+    GASTOS : text observacion_diferencia
+    GASTOS : string url_comprobante
+    GASTOS : enum estado_gasto
+    ALOJAMIENTOS : FK int id_alojamiento_referencia
+    ACTIVIDADES : FK int id_actividad_referencia
+
+    GASTOS_SUBGRUPO : PK int id_gasto_subgrupo
+    VIAJES : FK int id_viaje
+    SUBGRUPOS : FK int id_subgrupo
+    USUARIOS : FK int id_usuario_creador
+    USUARIOS : FK int id_usuario_pagador
+    GASTOS_SUBGRUPO : string descripcion
+    GASTOS_SUBGRUPO : decimal monto_ars
+    GASTOS_SUBGRUPO : enum categoria
+    GASTOS_SUBGRUPO : enum tipo_division
+    GASTOS_SUBGRUPO : boolean es_compartible_grupo_gral
+    GASTOS_SUBGRUPO : date fecha
+    GASTOS_SUBGRUPO : datetime timestamp_creacion
+    GASTOS_SUBGRUPO : json miembros_subgrupo_asignados
+    GASTOS_SUBGRUPO : enum estado_gasto
+
+    DEUDAS : PK int id_deuda
+    VIAJES : FK int id_viaje
+    USUARIOS : FK int id_acreedor
+    USUARIOS : FK int id_deudor
+    GASTOS : FK int id_gasto
+    DEUDAS : decimal monto_ars
+    DEUDAS : decimal monto_clp
+    DEUDAS : decimal monto_usd
+    DEUDAS : enum estado_deuda
+    DEUDAS : datetime fecha_creacion
+    DEUDAS : datetime fecha_vencimiento
+    DEUDAS : datetime fecha_pago
+    DEUDAS : text observacion
+
+    DEUDAS_SUBGRUPO : PK int id_deuda_subgrupo
+    SUBGRUPOS : FK int id_subgrupo
+    USUARIOS : FK int id_acreedor
+    USUARIOS : FK int id_deudor
+    GASTOS_SUBGRUPO : FK int id_gasto_subgrupo
+    DEUDAS_SUBGRUPO : decimal monto_ars
+    DEUDAS_SUBGRUPO : enum estado_deuda
+    DEUDAS_SUBGRUPO : datetime fecha_creacion
+    DEUDAS_SUBGRUPO : datetime fecha_pago
+
+    PAGOS : PK int id_pago
+    DEUDAS : FK int id_deuda
+    USUARIOS : FK int id_pagador
+    USUARIOS : FK int id_confirmador
+    PAGOS : enum metodo_pago
+    PAGOS : decimal monto_ars
+    PAGOS : decimal monto_clp
+    PAGOS : decimal monto_usd
+    PAGOS : enum estado_pago
+    PAGOS : datetime fecha_pago
+    PAGOS : datetime fecha_confirmacion
+    PAGOS : string referencia_mercadopago
+    PAGOS : string comprobante_url
+    PAGOS : text observacion
+
+    NOTIFICACIONES : PK int id_notificacion
+    USUARIOS : FK int id_usuario_destinatario
+    VIAJES : FK int id_viaje
+    NOTIFICACIONES : enum tipo_evento
+    NOTIFICACIONES : string titulo
+    NOTIFICACIONES : text contenido
+    NOTIFICACIONES : json canales
+    NOTIFICACIONES : boolean leida
+    NOTIFICACIONES : datetime fecha_creacion
+    NOTIFICACIONES : datetime fecha_lectura
+    NOTIFICACIONES : string url_accion
+
+    AUDITORIA : PK int id_auditoria
+    VIAJES : FK int id_viaje
+    USUARIOS : FK int id_usuario_accion
+    AUDITORIA : enum tipo_evento
+    AUDITORIA : string tabla_afectada
+    AUDITORIA : int id_registro_afectado
+    AUDITORIA : json cambio_anterior
+    AUDITORIA : json cambio_nuevo
+    AUDITORIA : datetime timestamp_accion
+    AUDITORIA : text observacion
+
+    CONFIGURACION_VIAJE : PK int id_config_viaje
+    VIAJES : FK int id_viaje
+    CONFIGURACION_VIAJE : json canales_notificacion
+    CONFIGURACION_VIAJE : boolean permite_edicion_pasado
+    CONFIGURACION_VIAJE : int dias_anticipacion_notificacion
+    CONFIGURACION_VIAJE : enum moneda_base
+    CONFIGURACION_VIAJE : datetime fecha_actualizacion
+
+    TASAS_CAMBIO : PK int id_tasa_cambio
+    VIAJES : FK int id_viaje
+    TASAS_CAMBIO : decimal tasa_usd_ars
+    TASAS_CAMBIO : decimal tasa_clp_ars
+    TASAS_CAMBIO : enum tipo_fuente
+    TASAS_CAMBIO : datetime fecha_actualizacion
+    TASAS_CAMBIO : datetime fecha_proxima_actualizacion
