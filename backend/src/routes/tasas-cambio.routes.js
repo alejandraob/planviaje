@@ -10,7 +10,7 @@ const tasasCambioController = require('../controllers/tasasCambioController');
 // GET /api/tasas-cambio - Obtener tasa actual
 router.get('/', tasasCambioController.obtenerTasaActual.bind(tasasCambioController));
 
-// GET /api/tasas-cambio/historial - Obtener histórico de tasas
+// GET /api/tasas-cambio/historial - Obtener hist├│rico de tasas
 router.get('/historial', tasasCambioController.obtenerHistorial.bind(tasasCambioController));
 
 // POST /api/tasas-cambio/actualizar-api - Actualizar desde API externa
