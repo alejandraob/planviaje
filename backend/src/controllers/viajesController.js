@@ -345,7 +345,7 @@ const obtenerEstadisticas = async (req, res) => {
   });
 
   const totalAlojamientos = await Alojamiento.count({
-    where: { id_viaje: id, estado: 'activo' }
+    where: { id_viaje: id }
   });
 
   const totalActividades = await Actividad.count({

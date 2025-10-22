@@ -11,8 +11,9 @@ const { validateBody, validateParams, validateQuery } = require('../middleware/v
 const {
   crearViajeSchema,
   editarViajeSchema,
-  idParamSchema,
-  paginationSchema
+  viajesFiltrosSchema,
+  cambiarAdminSchema,
+  idParamSchema
 } = require('../utils/validationSchemas');
 const {
   crearViaje,
@@ -22,6 +23,35 @@ const {
   eliminarViaje,
   obtenerEstadisticas
 } = require('../controllers/viajesController');
+const { cambiarAdminSecundario } = require('../controllers/miembrosController');
+
+// Mount miembros routes
+const miembrosRoutes = require('./miembros.routes');
+router.use('/:id/miembros', miembrosRoutes);
+
+// Mount franjas routes
+const franjasRoutes = require('./franjas.routes');
+router.use('/:id/franjas', franjasRoutes);
+
+// Mount alojamientos routes
+const alojamientosRoutes = require('./alojamientos.routes');
+router.use('/:id/alojamientos', alojamientosRoutes);
+
+// Mount actividades routes
+const actividadesRoutes = require('./actividades.routes');
+router.use('/:id/actividades', actividadesRoutes);
+
+// Mount gastos routes
+const gastosRoutes = require('./gastos.routes');
+router.use('/:id/gastos', gastosRoutes);
+
+// Mount deudas routes
+const deudasRoutes = require('./deudas.routes');
+router.use('/:id/deudas', deudasRoutes);
+
+// Mount subgrupos routes
+const subgruposRoutes = require('./subgrupos.routes');
+router.use('/:id/subgrupos', subgruposRoutes);
 
 /**
  * @route   POST /api/viajes
@@ -43,7 +73,7 @@ router.post(
 router.get(
   '/',
   authenticate,
-  validateQuery(paginationSchema),
+  validateQuery(viajesFiltrosSchema),
   asyncHandler(listarMisViajes)
 );
 
@@ -94,6 +124,19 @@ router.get(
   authenticate,
   validateParams(idParamSchema),
   asyncHandler(obtenerEstadisticas)
+);
+
+/**
+ * @route   PUT /api/viajes/:id/admin-secundario
+ * @desc    Change secondary admin
+ * @access  Private (principal admin only)
+ */
+router.put(
+  '/:id/admin-secundario',
+  authenticate,
+  validateParams(idParamSchema),
+  validateBody(cambiarAdminSchema),
+  asyncHandler(cambiarAdminSecundario)
 );
 
 module.exports = router;

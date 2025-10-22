@@ -1,0 +1,215 @@
+@baseUrl = http://localhost:3001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwibm9tYnJlIjoiSnVhbiIsImFwZWxsaWRvIjoiUMOpcmV6IiwiaWF0IjoxNzYwOTgzOTUyLCJleHAiOjE3NjEwNzAzNTJ9.7PoWMXklHtwHmFcoCzyd1uyItTP1LjsAapluif5osdw
+@idViaje = 4
+@idFranja = 1
+
+### ==================== FRANJAS ENDPOINTS ====================
+
+### 1. Create Franja
+# POST {{baseUrl}}/viajes/:id/franjas
+# Creates a new franja (time slot) for a trip
+# Auth: Admin only
+POST {{baseUrl}}/viajes/{{idViaje}}/franjas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre_lugar": "Buenos Aires",
+  "fecha_inicio": "2025-01-01",
+  "fecha_fin": "2025-01-05",
+  "descripcion": "Exploring the capital city"
+}
+
+### 2. Create Another Franja
+# Create a second franja to test ordering
+POST {{baseUrl}}/viajes/{{idViaje}}/franjas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre_lugar": "Mendoza",
+  "fecha_inicio": "2025-01-06",
+  "fecha_fin": "2025-01-10",
+  "descripcion": "Wine tasting and mountains"
+}
+
+### 3. Create Third Franja
+# Create a third franja
+POST {{baseUrl}}/viajes/{{idViaje}}/franjas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre_lugar": "Bariloche",
+  "fecha_inicio": "2025-01-11",
+  "fecha_fin": "2025-01-15",
+  "descripcion": "Lakes and chocolate"
+}
+
+### 4. List All Franjas
+# GET {{baseUrl}}/viajes/:id/franjas
+# Lists all franjas for a trip
+# Auth: Members
+GET {{baseUrl}}/viajes/{{idViaje}}/franjas
+Authorization: Bearer {{token}}
+
+### 5. List Franjas with Filters
+# Filter by state
+GET {{baseUrl}}/viajes/{{idViaje}}/franjas?estado=programada&page=1&limit=10
+Authorization: Bearer {{token}}
+
+### 6. Get Franja Details
+# GET {{baseUrl}}/viajes/:id/franjas/:idFranja
+# Gets details of a specific franja
+# Auth: Members
+GET {{baseUrl}}/viajes/{{idViaje}}/franjas/{{idFranja}}
+Authorization: Bearer {{token}}
+
+### 7. Update Franja
+# PUT {{baseUrl}}/viajes/:id/franjas/:idFranja
+# Updates a franja
+# Auth: Admin only
+PUT {{baseUrl}}/viajes/{{idViaje}}/franjas/{{idFranja}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre_lugar": "Buenos Aires - Updated",
+  "descripcion": "Exploring the capital city - extended stay"
+}
+
+### 8. Update Franja Dates
+# Update the dates of a franja
+PUT {{baseUrl}}/viajes/{{idViaje}}/franjas/{{idFranja}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "fecha_inicio": "2025-01-01",
+  "fecha_fin": "2025-01-06",
+  "descripcion": "Extended stay in Buenos Aires"
+}
+
+### 9. Update Franja State
+# Manually change state
+PUT {{baseUrl}}/viajes/{{idViaje}}/franjas/{{idFranja}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "estado_franja": "cancelada"
+}
+
+### 10. Reorder Franja
+# PUT {{baseUrl}}/viajes/:id/franjas/:idFranja/reorder
+# Changes the order of a franja
+# Auth: Admin only
+PUT {{baseUrl}}/viajes/{{idViaje}}/franjas/2/reorder
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nuevo_orden": 1
+}
+
+### 11. Get Franjas Statistics
+# GET {{baseUrl}}/viajes/:id/franjas/estadisticas
+# Gets statistics for all franjas in a trip
+# Auth: Members
+GET {{baseUrl}}/viajes/{{idViaje}}/franjas/estadisticas
+Authorization: Bearer {{token}}
+
+### 12. Delete Franja
+# DELETE {{baseUrl}}/viajes/:id/franjas/:idFranja
+# Deletes a franja (only if no alojamientos or actividades)
+# Auth: Admin only
+DELETE {{baseUrl}}/viajes/{{idViaje}}/franjas/3
+Authorization: Bearer {{token}}
+
+### ==================== ERROR CASES ====================
+
+### ERROR 1: Create Franja with Overlapping Dates
+POST {{baseUrl}}/viajes/{{idViaje}}/franjas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre_lugar": "Overlapping Place",
+  "fecha_inicio": "2025-01-03",
+  "fecha_fin": "2025-01-08",
+  "descripcion": "This should fail - overlaps with existing franjas"
+}
+
+### ERROR 2: Create Franja Outside Trip Dates
+POST {{baseUrl}}/viajes/{{idViaje}}/franjas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre_lugar": "Too Far",
+  "fecha_inicio": "2025-12-01",
+  "fecha_fin": "2025-12-05",
+  "descripcion": "This should fail - outside trip dates"
+}
+
+### ERROR 3: Create Franja with Invalid Dates
+POST {{baseUrl}}/viajes/{{idViaje}}/franjas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre_lugar": "Invalid Dates",
+  "fecha_inicio": "2025-01-20",
+  "fecha_fin": "2025-01-18",
+  "descripcion": "This should fail - end date before start date"
+}
+
+### ERROR 4: Update Franja Without Admin Permission
+# First, login with maria@example.com (non-admin user)
+# Then try to update
+PUT {{baseUrl}}/viajes/{{idViaje}}/franjas/{{idFranja}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre_lugar": "Unauthorized Update"
+}
+
+### ERROR 5: Reorder with Invalid Order Number
+PUT {{baseUrl}}/viajes/{{idViaje}}/franjas/{{idFranja}}/reorder
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nuevo_orden": 999
+}
+
+### ERROR 6: Get Non-existent Franja
+GET {{baseUrl}}/viajes/{{idViaje}}/franjas/9999
+Authorization: Bearer {{token}}
+
+### ERROR 7: Delete Non-existent Franja
+DELETE {{baseUrl}}/viajes/{{idViaje}}/franjas/9999
+Authorization: Bearer {{token}}
+
+### ==================== NOTES ====================
+#
+# State Management:
+# - Estado is automatically calculated based on dates:
+#   - 'programada': fecha_inicio > today
+#   - 'en_curso': today between fecha_inicio and fecha_fin
+#   - 'completada': today > fecha_fin
+#   - 'cancelada': manually set by admin
+#
+# Ordering:
+# - orden_secuencia is automatically assigned when creating
+# - Franjas are automatically reordered by date when dates change
+# - Can manually reorder using the /reorder endpoint
+#
+# Deletion:
+# - Franjas can only be deleted if they have no related alojamientos or actividades
+# - After deletion, remaining franjas are automatically reordered
+#
+# Access Control:
+# - Create, Update, Delete, Reorder: Admin only (principal or secondary)
+# - Read operations: All trip members

@@ -1,0 +1,518 @@
+### Variables
+@baseUrl = http://localhost:3001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3Mjk2MTAzNjIsImV4cCI6MTcyOTY5Njc2Mn0.RzWxPaKkPx7Y7v8GQZvKp2wDGxXqLGb8pP3VKmN2YhY
+@viajeId = 4
+@usuarioId = 2
+@notificacionId = 1
+
+### ============================================
+### NOTIFICACIONES - Gestión de Notificaciones
+### ============================================
+
+### 1. Enviar Notificación a Usuario Específico
+POST {{baseUrl}}/notificaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_destinatario": {{usuarioId}},
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "nuevo_gasto",
+  "titulo": "Nuevo gasto registrado",
+  "contenido": "Se ha registrado un nuevo gasto de $45,000 ARS para la cena grupal",
+  "canales": {
+    "push": true,
+    "email": true,
+    "whatsapp": false
+  },
+  "url_accion": "https://app.planviaje.com/viajes/4/gastos/10"
+}
+
+### 2. Difundir Notificación a Todos los Miembros
+POST {{baseUrl}}/notificaciones/difundir
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "cambio_cronograma",
+  "titulo": "Cambio en el cronograma",
+  "contenido": "Se ha actualizado la fecha de la franja de Córdoba. Por favor revisa el cronograma actualizado.",
+  "canales": {
+    "push": true,
+    "email": true,
+    "whatsapp": false
+  },
+  "url_accion": "https://app.planviaje.com/viajes/4/cronograma"
+}
+
+### 3. Listar Mis Notificaciones
+GET {{baseUrl}}/notificaciones
+Authorization: Bearer {{token}}
+
+### 4. Listar Notificaciones con Filtros
+GET {{baseUrl}}/notificaciones?id_viaje={{viajeId}}&leida=false&page=1&limit=10
+Authorization: Bearer {{token}}
+
+### 5. Obtener Detalle de una Notificación
+GET {{baseUrl}}/notificaciones/{{notificacionId}}
+Authorization: Bearer {{token}}
+
+### 6. Marcar Notificación como Leída
+PUT {{baseUrl}}/notificaciones/{{notificacionId}}/leer
+Authorization: Bearer {{token}}
+
+### 7. Marcar Todas como Leídas
+PUT {{baseUrl}}/notificaciones/leer-todas
+Authorization: Bearer {{token}}
+
+### 8. Marcar Todas como Leídas (Solo de un Viaje)
+PUT {{baseUrl}}/notificaciones/leer-todas?id_viaje={{viajeId}}
+Authorization: Bearer {{token}}
+
+### 9. Eliminar Notificación
+DELETE {{baseUrl}}/notificaciones/{{notificacionId}}
+Authorization: Bearer {{token}}
+
+### 10. Obtener Conteo de No Leídas
+GET {{baseUrl}}/notificaciones/no-leidas/conteo
+Authorization: Bearer {{token}}
+
+### 11. Obtener Conteo de No Leídas de un Viaje
+GET {{baseUrl}}/notificaciones/no-leidas/conteo?id_viaje={{viajeId}}
+Authorization: Bearer {{token}}
+
+### 12. Obtener Estadísticas de Notificaciones
+GET {{baseUrl}}/notificaciones/estadisticas
+Authorization: Bearer {{token}}
+
+### 13. Obtener Estadísticas de un Viaje Específico
+GET {{baseUrl}}/notificaciones/estadisticas?id_viaje={{viajeId}}
+Authorization: Bearer {{token}}
+
+### ============================================
+### EJEMPLOS POR TIPO DE EVENTO
+### ============================================
+
+### Notificación: Nuevo Gasto
+POST {{baseUrl}}/notificaciones/difundir
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "nuevo_gasto",
+  "titulo": "Nuevo gasto registrado",
+  "contenido": "Juan registró un gasto de $25,000 ARS por transporte a Córdoba",
+  "canales": {
+    "push": true,
+    "email": false,
+    "whatsapp": false
+  },
+  "url_accion": "https://app.planviaje.com/viajes/4/gastos/12"
+}
+
+### Notificación: Pago Pendiente
+POST {{baseUrl}}/notificaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_destinatario": {{usuarioId}},
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "pago_pendiente",
+  "titulo": "Tienes un pago pendiente",
+  "contenido": "María te ha registrado un pago de $5,000 ARS. Por favor confirma o rechaza el pago.",
+  "canales": {
+    "push": true,
+    "email": true,
+    "whatsapp": true
+  },
+  "url_accion": "https://app.planviaje.com/viajes/4/deudas/3/pagos/1"
+}
+
+### Notificación: Cambio de Cronograma
+POST {{baseUrl}}/notificaciones/difundir
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "cambio_cronograma",
+  "titulo": "Actualización del itinerario",
+  "contenido": "Se ha modificado la fecha de la franja de Mendoza del 15/01 al 20/01",
+  "canales": {
+    "push": true,
+    "email": true,
+    "whatsapp": false
+  }
+}
+
+### Notificación: Miembro se Retiró
+POST {{baseUrl}}/notificaciones/difundir
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "miembro_retiro",
+  "titulo": "Un miembro abandonó el viaje",
+  "contenido": "Pedro se ha retirado del viaje. Se recalcularán los gastos y deudas.",
+  "canales": {
+    "push": true,
+    "email": true,
+    "whatsapp": false
+  },
+  "excluir_usuario": 5
+}
+
+### Notificación: Nuevo Miembro
+POST {{baseUrl}}/notificaciones/difundir
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "nuevo_miembro",
+  "titulo": "Nuevo miembro en el viaje",
+  "contenido": "Laura se ha unido al viaje. Dale la bienvenida!",
+  "canales": {
+    "push": true,
+    "email": false,
+    "whatsapp": false
+  },
+  "excluir_usuario": 6
+}
+
+### Notificación: Otra (Personalizada)
+POST {{baseUrl}}/notificaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_destinatario": {{usuarioId}},
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "otra",
+  "titulo": "Recordatorio: Reunión de planificación",
+  "contenido": "No olvides la reunión de planificación del viaje mañana a las 19:00",
+  "canales": {
+    "push": true,
+    "email": true,
+    "whatsapp": true
+  }
+}
+
+### ============================================
+### EJEMPLOS DE CANALES DE NOTIFICACIÓN
+### ============================================
+
+### Solo Push
+POST {{baseUrl}}/notificaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_destinatario": {{usuarioId}},
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "otra",
+  "titulo": "Actualización rápida",
+  "contenido": "Pequeña actualización en el viaje",
+  "canales": {
+    "push": true,
+    "email": false,
+    "whatsapp": false
+  }
+}
+
+### Push + Email
+POST {{baseUrl}}/notificaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_destinatario": {{usuarioId}},
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "cambio_cronograma",
+  "titulo": "Cambio importante en el cronograma",
+  "contenido": "Se ha realizado un cambio significativo en las fechas del viaje",
+  "canales": {
+    "push": true,
+    "email": true,
+    "whatsapp": false
+  }
+}
+
+### Todos los Canales
+POST {{baseUrl}}/notificaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_destinatario": {{usuarioId}},
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "pago_pendiente",
+  "titulo": "¡URGENTE! Confirma tu pago",
+  "contenido": "Tienes un pago pendiente de confirmación por $50,000 ARS. Por favor revísalo lo antes posible.",
+  "canales": {
+    "push": true,
+    "email": true,
+    "whatsapp": true
+  }
+}
+
+### ============================================
+### FLUJO COMPLETO DE NOTIFICACIONES
+### ============================================
+
+### Paso 1: Admin difunde notificación sobre nuevo gasto
+POST {{baseUrl}}/notificaciones/difundir
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "nuevo_gasto",
+  "titulo": "Nuevo gasto grupal",
+  "contenido": "Se ha registrado un gasto grupal de $100,000 ARS para el alojamiento",
+  "canales": {
+    "push": true,
+    "email": true,
+    "whatsapp": false
+  },
+  "url_accion": "https://app.planviaje.com/viajes/4/gastos/15"
+}
+
+### Paso 2: Usuario lista sus notificaciones no leídas
+GET {{baseUrl}}/notificaciones?leida=false
+Authorization: Bearer {{token}}
+
+### Paso 3: Usuario obtiene el conteo de no leídas
+GET {{baseUrl}}/notificaciones/no-leidas/conteo
+Authorization: Bearer {{token}}
+
+### Paso 4: Usuario lee una notificación específica
+GET {{baseUrl}}/notificaciones/{{notificacionId}}
+Authorization: Bearer {{token}}
+
+### Paso 5: Usuario marca la notificación como leída
+PUT {{baseUrl}}/notificaciones/{{notificacionId}}/leer
+Authorization: Bearer {{token}}
+
+### Paso 6: Usuario marca todas las del viaje como leídas
+PUT {{baseUrl}}/notificaciones/leer-todas?id_viaje={{viajeId}}
+Authorization: Bearer {{token}}
+
+### Paso 7: Verificar que ya no hay notificaciones no leídas
+GET {{baseUrl}}/notificaciones/no-leidas/conteo?id_viaje={{viajeId}}
+Authorization: Bearer {{token}}
+
+### ============================================
+### FILTROS AVANZADOS
+### ============================================
+
+### Filtrar por Viaje y Tipo de Evento
+GET {{baseUrl}}/notificaciones?id_viaje={{viajeId}}&tipo_evento=nuevo_gasto
+Authorization: Bearer {{token}}
+
+### Filtrar Solo No Leídas de un Viaje
+GET {{baseUrl}}/notificaciones?id_viaje={{viajeId}}&leida=false
+Authorization: Bearer {{token}}
+
+### Filtrar Solo Leídas
+GET {{baseUrl}}/notificaciones?leida=true
+Authorization: Bearer {{token}}
+
+### Filtrar por Tipo: Pagos Pendientes
+GET {{baseUrl}}/notificaciones?tipo_evento=pago_pendiente
+Authorization: Bearer {{token}}
+
+### Filtrar por Tipo: Cambios de Cronograma
+GET {{baseUrl}}/notificaciones?tipo_evento=cambio_cronograma
+Authorization: Bearer {{token}}
+
+### Paginación
+GET {{baseUrl}}/notificaciones?page=2&limit=5
+Authorization: Bearer {{token}}
+
+### ============================================
+### CASOS DE USO ESPECIALES
+### ============================================
+
+### Difundir excluyendo al creador del evento
+POST {{baseUrl}}/notificaciones/difundir
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "nuevo_gasto",
+  "titulo": "Juan registró un gasto",
+  "contenido": "Juan pagó $30,000 ARS por el transporte",
+  "canales": {
+    "push": true,
+    "email": false,
+    "whatsapp": false
+  },
+  "excluir_usuario": 1
+}
+
+### Notificación sin URL de acción
+POST {{baseUrl}}/notificaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_destinatario": {{usuarioId}},
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "otra",
+  "titulo": "Mensaje informativo",
+  "contenido": "Recuerda llevar protector solar para el viaje",
+  "canales": {
+    "push": true,
+    "email": false,
+    "whatsapp": false
+  }
+}
+
+### Notificación urgente con todos los canales
+POST {{baseUrl}}/notificaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_destinatario": {{usuarioId}},
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "pago_pendiente",
+  "titulo": "URGENTE: Vence plazo de pago",
+  "contenido": "El plazo para confirmar tu pago vence en 24 horas. Monto: $25,000 ARS",
+  "canales": {
+    "push": true,
+    "email": true,
+    "whatsapp": true
+  },
+  "url_accion": "https://app.planviaje.com/viajes/4/deudas/5/pagos/2"
+}
+
+### ============================================
+### ESTADÍSTICAS Y ANÁLISIS
+### ============================================
+
+### Ver estadísticas generales
+GET {{baseUrl}}/notificaciones/estadisticas
+Authorization: Bearer {{token}}
+
+### Ver estadísticas de un viaje específico
+GET {{baseUrl}}/notificaciones/estadisticas?id_viaje={{viajeId}}
+Authorization: Bearer {{token}}
+
+### Ver todas las notificaciones del usuario
+GET {{baseUrl}}/notificaciones?limit=100
+Authorization: Bearer {{token}}
+
+### ============================================
+### VALIDACIONES Y ERRORES ESPERADOS
+### ============================================
+
+### Error: Usuario destinatario no existe
+POST {{baseUrl}}/notificaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_destinatario": 99999,
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "otra",
+  "titulo": "Test",
+  "contenido": "Esto debería fallar",
+  "canales": {
+    "push": true
+  }
+}
+
+### Error: Viaje no existe
+POST {{baseUrl}}/notificaciones/difundir
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_viaje": 99999,
+  "tipo_evento": "otra",
+  "titulo": "Test",
+  "contenido": "Esto debería fallar",
+  "canales": {
+    "push": true
+  }
+}
+
+### Error: Tipo de evento inválido
+POST {{baseUrl}}/notificaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_destinatario": {{usuarioId}},
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "tipo_invalido",
+  "titulo": "Test",
+  "contenido": "Esto debería fallar",
+  "canales": {
+    "push": true
+  }
+}
+
+### Error: Canales inválidos
+POST {{baseUrl}}/notificaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_destinatario": {{usuarioId}},
+  "id_viaje": {{viajeId}},
+  "tipo_evento": "otra",
+  "titulo": "Test",
+  "contenido": "Esto debería fallar",
+  "canales": {
+    "telegram": true
+  }
+}
+
+### Error: Solo propietario puede leer su notificación
+GET {{baseUrl}}/notificaciones/99999
+Authorization: Bearer {{token}}
+
+### ============================================
+### NOTAS IMPORTANTES
+### ============================================
+
+# Tipos de Evento:
+# - nuevo_gasto: Cuando se registra un nuevo gasto
+# - pago_pendiente: Cuando hay un pago esperando confirmación
+# - cambio_cronograma: Cuando se modifica el itinerario
+# - miembro_retiro: Cuando un miembro abandona el viaje
+# - nuevo_miembro: Cuando se une un nuevo miembro
+# - otra: Notificaciones personalizadas
+
+# Canales de Notificación:
+# - push: Notificación push en la app móvil
+# - email: Correo electrónico
+# - whatsapp: Mensaje de WhatsApp
+
+# Endpoints Especiales:
+# - POST /notificaciones: Enviar a un usuario específico
+# - POST /notificaciones/difundir: Enviar a todos los miembros del viaje
+# - PUT /notificaciones/leer-todas: Marcar todas como leídas
+# - GET /notificaciones/no-leidas/conteo: Contador para badges
+# - GET /notificaciones/estadisticas: Análisis de notificaciones
+
+# Permisos:
+# - Enviar notificación individual: Admin del viaje
+# - Difundir notificación: Admin del viaje
+# - Ver mis notificaciones: Todos los usuarios
+# - Marcar como leída: Solo propietario
+# - Eliminar: Solo propietario
+
+# Buenas Prácticas:
+# - Usar "excluir_usuario" al difundir para no notificar al que causó el evento
+# - Elegir los canales apropiados según la urgencia
+# - Incluir url_accion para que el usuario pueda ir directo a la acción
+# - Mantener el contenido conciso y claro

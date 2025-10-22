@@ -61,6 +61,60 @@ const setupAssociations = () => {
     as: 'usuario'
   });
 
+  // Usuario -> Alojamientos (as creador)
+  Usuario.hasMany(Alojamiento, {
+    foreignKey: 'id_usuario_creador',
+    as: 'alojamientosCreados'
+  });
+
+  // Usuario -> Alojamientos (as reserva)
+  Usuario.hasMany(Alojamiento, {
+    foreignKey: 'id_usuario_reserva',
+    as: 'alojamientosReservados'
+  });
+
+  // Usuario -> Actividades (as creador)
+  Usuario.hasMany(Actividad, {
+    foreignKey: 'id_usuario_creador',
+    as: 'actividadesCreadas'
+  });
+
+  // Usuario -> Actividades (as pago)
+  Usuario.hasMany(Actividad, {
+    foreignKey: 'id_usuario_pago',
+    as: 'actividadesPagadas'
+  });
+
+  // Usuario -> Gastos (as creador)
+  Usuario.hasMany(Gasto, {
+    foreignKey: 'id_usuario_creador',
+    as: 'gastosCreados'
+  });
+
+  // Usuario -> Gastos (as pagador)
+  Usuario.hasMany(Gasto, {
+    foreignKey: 'id_usuario_pagador',
+    as: 'gastosPagados'
+  });
+
+  // Usuario -> Deudas (as acreedor)
+  Usuario.hasMany(Deuda, {
+    foreignKey: 'id_acreedor',
+    as: 'deudasComoAcreedor'
+  });
+
+  // Usuario -> Deudas (as deudor)
+  Usuario.hasMany(Deuda, {
+    foreignKey: 'id_deudor',
+    as: 'deudasComoDeudor'
+  });
+
+  // Usuario -> Subgrupos (as representante)
+  Usuario.hasMany(Subgrupo, {
+    foreignKey: 'id_representante',
+    as: 'subgruposComoRepresentante'
+  });
+
   // ==================== VIAJE ASSOCIATIONS ====================
 
   // Viaje -> MiembroViaje
@@ -217,6 +271,34 @@ const setupAssociations = () => {
     as: 'franja'
   });
 
+  // ==================== ALOJAMIENTO ASSOCIATIONS ====================
+
+  // Alojamiento -> Usuario (creador)
+  Alojamiento.belongsTo(Usuario, {
+    foreignKey: 'id_usuario_creador',
+    as: 'usuarioCreador'
+  });
+
+  // Alojamiento -> Usuario (usuario reserva)
+  Alojamiento.belongsTo(Usuario, {
+    foreignKey: 'id_usuario_reserva',
+    as: 'usuarioReserva'
+  });
+
+  // ==================== ACTIVIDAD ASSOCIATIONS ====================
+
+  // Actividad -> Usuario (creador)
+  Actividad.belongsTo(Usuario, {
+    foreignKey: 'id_usuario_creador',
+    as: 'usuarioCreador'
+  });
+
+  // Actividad -> Usuario (usuario pago)
+  Actividad.belongsTo(Usuario, {
+    foreignKey: 'id_usuario_pago',
+    as: 'usuarioPago'
+  });
+
   // ==================== SUBGRUPO ASSOCIATIONS ====================
 
   // Subgrupo -> SubgrupoMiembro
@@ -227,6 +309,18 @@ const setupAssociations = () => {
   SubgrupoMiembro.belongsTo(Subgrupo, {
     foreignKey: 'id_subgrupo',
     as: 'subgrupo'
+  });
+
+  // Subgrupo -> MiembroViaje (representante)
+  Subgrupo.belongsTo(MiembroViaje, {
+    foreignKey: 'id_representante',
+    as: 'representante'
+  });
+
+  // SubgrupoMiembro -> MiembroViaje
+  SubgrupoMiembro.belongsTo(MiembroViaje, {
+    foreignKey: 'id_miembro_viaje',
+    as: 'miembroViaje'
   });
 
   // Subgrupo -> GastoSubgrupo
@@ -261,6 +355,18 @@ const setupAssociations = () => {
   Gasto.belongsTo(Usuario, {
     foreignKey: 'id_usuario_pagador',
     as: 'pagador'
+  });
+
+  // Gasto -> Alojamiento (referencia)
+  Gasto.belongsTo(Alojamiento, {
+    foreignKey: 'id_alojamiento_referencia',
+    as: 'alojamientoReferencia'
+  });
+
+  // Gasto -> Actividad (referencia)
+  Gasto.belongsTo(Actividad, {
+    foreignKey: 'id_actividad_referencia',
+    as: 'actividadReferencia'
   });
 
   // Gasto -> Gasto (padre-hijo)

@@ -37,7 +37,8 @@ const Pago = sequelize.define('pagos', {
     }
   },
   metodo_pago: {
-    type: DataTypes.ENUM('transferencia_bancaria', 'efectivo', 'mercadopago', 'otro'),
+    type: DataTypes.ENUM('efectivo', 'transferencia', 'tarjeta', 'otro'),
+    defaultValue: 'transferencia',
     allowNull: false
   },
   monto_ars: {
@@ -53,8 +54,8 @@ const Pago = sequelize.define('pagos', {
     allowNull: true
   },
   estado_pago: {
-    type: DataTypes.ENUM('pendiente_confirmacion', 'confirmado', 'rechazado'),
-    defaultValue: 'pendiente_confirmacion'
+    type: DataTypes.ENUM('pendiente', 'confirmado', 'rechazado'),
+    defaultValue: 'pendiente'
   },
   fecha_pago: {
     type: DataTypes.DATE,

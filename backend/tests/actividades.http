@@ -1,0 +1,192 @@
+### Variables
+@baseUrl = http://localhost:3001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3Mjk2MTAzNjIsImV4cCI6MTcyOTY5Njc2Mn0.RzWxPaKkPx7Y7v8GQZvKp2wDGxXqLGb8pP3VKmN2YhY
+@viajeId = 4
+@franjaId = 1
+@actividadId = 1
+
+### ============================================
+### ACTIVIDADES
+### ============================================
+
+### 1. Crear Actividad
+POST {{baseUrl}}/viajes/{{viajeId}}/actividades
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_franja": {{franjaId}},
+  "nombre": "Trekking Cerro Aconcagua",
+  "fecha": "2026-01-05",
+  "hora": "08:00",
+  "descripcion": "Caminata de 6 horas por el sendero principal",
+  "tipo_actividad": "visita",
+  "es_paga": true,
+  "valor_referencial_ars": 25000,
+  "valor_referencial_clp": 15000,
+  "valor_referencial_usd": 50,
+  "miembros_asignados": [2, 3]
+}
+
+### 2. Listar Actividades
+GET {{baseUrl}}/viajes/{{viajeId}}/actividades
+Authorization: Bearer {{token}}
+
+### 3. Listar Actividades con Filtros
+GET {{baseUrl}}/viajes/{{viajeId}}/actividades?tipo_actividad=visita&estado_actividad=programada&page=1&limit=10
+Authorization: Bearer {{token}}
+
+### 4. Obtener Detalles de Actividad
+GET {{baseUrl}}/viajes/{{viajeId}}/actividades/{{actividadId}}
+Authorization: Bearer {{token}}
+
+### 5. Actualizar Actividad
+PUT {{baseUrl}}/viajes/{{viajeId}}/actividades/{{actividadId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Trekking Cerro Aconcagua - Actualizado",
+  "descripcion": "Caminata de 8 horas por el sendero avanzado",
+  "hora": "07:00",
+  "valor_referencial_ars": 30000,
+  "estado_actividad": "en_curso"
+}
+
+### 6. Actualizar Usuario que Pagó
+PUT {{baseUrl}}/viajes/{{viajeId}}/actividades/{{actividadId}}/pago
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_pago": 1
+}
+
+### 7. Obtener Estadísticas de Actividades
+GET {{baseUrl}}/viajes/{{viajeId}}/actividades/estadisticas
+Authorization: Bearer {{token}}
+
+### 8. Eliminar Actividad (Solo Admin)
+DELETE {{baseUrl}}/viajes/{{viajeId}}/actividades/{{actividadId}}
+Authorization: Bearer {{token}}
+
+### ============================================
+### EJEMPLOS POR TIPO DE ACTIVIDAD
+### ============================================
+
+### Actividad - Entrada a Parque
+POST {{baseUrl}}/viajes/{{viajeId}}/actividades
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_franja": {{franjaId}},
+  "nombre": "Entrada Parque Nacional Los Glaciares",
+  "fecha": "2026-01-06",
+  "tipo_actividad": "entrada",
+  "es_paga": true,
+  "valor_referencial_ars": 5000,
+  "miembros_asignados": [2, 3, 4]
+}
+
+### Actividad - Comida
+POST {{baseUrl}}/viajes/{{viajeId}}/actividades
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_franja": {{franjaId}},
+  "nombre": "Cena en Restaurante Patagónico",
+  "fecha": "2026-01-06",
+  "hora": "20:00",
+  "descripcion": "Reserva para 5 personas",
+  "tipo_actividad": "comida",
+  "es_paga": false,
+  "miembros_asignados": [2, 3, 4, 5, 6]
+}
+
+### Actividad - Transporte
+POST {{baseUrl}}/viajes/{{viajeId}}/actividades
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_franja": {{franjaId}},
+  "nombre": "Transfer al Aeropuerto",
+  "fecha": "2026-01-07",
+  "hora": "15:00",
+  "tipo_actividad": "transporte",
+  "es_paga": true,
+  "valor_referencial_ars": 8000,
+  "id_usuario_pago": 1,
+  "miembros_asignados": [2, 3]
+}
+
+### Actividad - Visita Turística
+POST {{baseUrl}}/viajes/{{viajeId}}/actividades
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_franja": {{franjaId}},
+  "nombre": "Tour Glaciar Perito Moreno",
+  "fecha": "2026-01-05",
+  "hora": "09:00",
+  "descripcion": "Tour guiado de 4 horas con navegación",
+  "tipo_actividad": "visita",
+  "es_paga": true,
+  "valor_referencial_ars": 35000,
+  "valor_referencial_usd": 70,
+  "miembros_asignados": [2, 3, 4]
+}
+
+### ============================================
+### CASOS DE USO ESPECIALES
+### ============================================
+
+### Actividad sin Franja Asignada
+POST {{baseUrl}}/viajes/{{viajeId}}/actividades
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Actividad Flexible",
+  "fecha": "2026-01-05",
+  "tipo_actividad": "otro",
+  "es_paga": false,
+  "descripcion": "Actividad que se puede hacer en cualquier momento",
+  "miembros_asignados": [2]
+}
+
+### Actividad Gratuita
+POST {{baseUrl}}/viajes/{{viajeId}}/actividades
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_franja": {{franjaId}},
+  "nombre": "Caminata por el Pueblo",
+  "fecha": "2026-01-06",
+  "hora": "10:00",
+  "tipo_actividad": "visita",
+  "es_paga": false,
+  "miembros_asignados": [2, 3, 4, 5]
+}
+
+### Cambiar Estado a Completada
+PUT {{baseUrl}}/viajes/{{viajeId}}/actividades/{{actividadId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "estado_actividad": "completada"
+}
+
+### Cancelar Actividad
+PUT {{baseUrl}}/viajes/{{viajeId}}/actividades/{{actividadId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "estado_actividad": "cancelada"
+}

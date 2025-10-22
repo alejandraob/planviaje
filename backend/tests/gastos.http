@@ -1,0 +1,322 @@
+### Variables
+@baseUrl = http://localhost:3001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3Mjk2MTAzNjIsImV4cCI6MTcyOTY5Njc2Mn0.RzWxPaKkPx7Y7v8GQZvKp2wDGxXqLGb8pP3VKmN2YhY
+@viajeId = 4
+@gastoId = 1
+
+### ============================================
+### GASTOS
+### ============================================
+
+### 1. Crear Gasto Grupal (Auto-distribución)
+POST {{baseUrl}}/viajes/{{viajeId}}/gastos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_pagador": 1,
+  "descripcion": "Cena grupal en restaurante patagónico",
+  "monto_ars": 45000,
+  "monto_clp": 25000,
+  "monto_usd": 90,
+  "categoria": "comida",
+  "tipo_gasto": "grupal",
+  "tipo_division": "todos_miembros",
+  "fecha": "2026-01-05",
+  "observacion": "Incluye propina del 10%"
+}
+
+### 2. Crear Gasto con Miembros Específicos
+POST {{baseUrl}}/viajes/{{viajeId}}/gastos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_pagador": 1,
+  "descripcion": "Entrada al Parque Nacional",
+  "monto_ars": 15000,
+  "categoria": "entradas",
+  "tipo_gasto": "grupal",
+  "tipo_division": "miembros_especificos",
+  "fecha": "2026-01-05",
+  "miembros_asignados": [
+    {
+      "id_miembro_viaje": 2,
+      "monto_corresponde": 5000
+    },
+    {
+      "id_miembro_viaje": 3,
+      "monto_corresponde": 5000
+    },
+    {
+      "id_miembro_viaje": 4,
+      "monto_corresponde": 5000
+    }
+  ]
+}
+
+### 3. Crear Gasto de Transporte
+POST {{baseUrl}}/viajes/{{viajeId}}/gastos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_pagador": 1,
+  "descripcion": "Alquiler de auto para el grupo",
+  "monto_ars": 80000,
+  "monto_usd": 160,
+  "categoria": "transporte",
+  "tipo_gasto": "grupal",
+  "tipo_division": "todos_miembros",
+  "fecha": "2026-01-04"
+}
+
+### 4. Crear Gasto de Alojamiento (con referencia)
+POST {{baseUrl}}/viajes/{{viajeId}}/gastos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_pagador": 1,
+  "descripcion": "Pago de hostería - Noche 1",
+  "monto_ars": 120000,
+  "categoria": "alojamiento",
+  "tipo_gasto": "grupal",
+  "tipo_division": "todos_miembros",
+  "fecha": "2026-01-04",
+  "id_alojamiento_referencia": 1
+}
+
+### 5. Crear Gasto Personal
+POST {{baseUrl}}/viajes/{{viajeId}}/gastos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_pagador": 1,
+  "descripcion": "Snacks personales",
+  "monto_ars": 3000,
+  "categoria": "otros",
+  "tipo_gasto": "personal",
+  "tipo_division": "individual",
+  "fecha": "2026-01-05",
+  "miembros_asignados": [
+    {
+      "id_miembro_viaje": 2,
+      "monto_corresponde": 3000
+    }
+  ]
+}
+
+### 6. Crear Gasto de Subgrupo
+POST {{baseUrl}}/viajes/{{viajeId}}/gastos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_pagador": 1,
+  "descripcion": "Tour exclusivo del subgrupo de montañismo",
+  "monto_ars": 50000,
+  "categoria": "entradas",
+  "tipo_gasto": "subgrupo_privado",
+  "tipo_division": "subgrupos",
+  "fecha": "2026-01-06",
+  "miembros_asignados": [
+    {
+      "id_miembro_viaje": 2,
+      "monto_corresponde": 25000
+    },
+    {
+      "id_miembro_viaje": 3,
+      "monto_corresponde": 25000
+    }
+  ]
+}
+
+### 7. Listar Todos los Gastos
+GET {{baseUrl}}/viajes/{{viajeId}}/gastos
+Authorization: Bearer {{token}}
+
+### 8. Listar Gastos con Filtros
+GET {{baseUrl}}/viajes/{{viajeId}}/gastos?categoria=comida&tipo_gasto=grupal&estado_gasto=confirmado&page=1&limit=10
+Authorization: Bearer {{token}}
+
+### 9. Listar Gastos por Categoría
+GET {{baseUrl}}/viajes/{{viajeId}}/gastos?categoria=transporte
+Authorization: Bearer {{token}}
+
+### 10. Obtener Detalles de Gasto
+GET {{baseUrl}}/viajes/{{viajeId}}/gastos/{{gastoId}}
+Authorization: Bearer {{token}}
+
+### 11. Actualizar Gasto
+PUT {{baseUrl}}/viajes/{{viajeId}}/gastos/{{gastoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "descripcion": "Cena grupal en restaurante patagónico - ACTUALIZADO",
+  "monto_ars": 50000,
+  "observacion": "Se agregaron bebidas al total"
+}
+
+### 12. Actualizar Estado de Gasto
+PUT {{baseUrl}}/viajes/{{viajeId}}/gastos/{{gastoId}}/estado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "estado_gasto": "confirmado"
+}
+
+### 13. Obtener Estadísticas de Gastos
+GET {{baseUrl}}/viajes/{{viajeId}}/gastos/estadisticas
+Authorization: Bearer {{token}}
+
+### 14. Eliminar Gasto (Solo Admin)
+DELETE {{baseUrl}}/viajes/{{viajeId}}/gastos/{{gastoId}}
+Authorization: Bearer {{token}}
+
+### ============================================
+### EJEMPLOS POR CATEGORÍA
+### ============================================
+
+### Gasto de Comida
+POST {{baseUrl}}/viajes/{{viajeId}}/gastos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_pagador": 1,
+  "descripcion": "Desayuno en cafetería local",
+  "monto_ars": 8000,
+  "categoria": "comida",
+  "tipo_gasto": "grupal",
+  "tipo_division": "todos_miembros",
+  "fecha": "2026-01-05"
+}
+
+### Gasto de Entradas
+POST {{baseUrl}}/viajes/{{viajeId}}/gastos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_pagador": 1,
+  "descripcion": "Tickets para museo histórico",
+  "monto_ars": 6000,
+  "categoria": "entradas",
+  "tipo_gasto": "grupal",
+  "tipo_division": "miembros_especificos",
+  "fecha": "2026-01-06",
+  "miembros_asignados": [
+    {
+      "id_miembro_viaje": 2,
+      "monto_corresponde": 2000
+    },
+    {
+      "id_miembro_viaje": 3,
+      "monto_corresponde": 2000
+    },
+    {
+      "id_miembro_viaje": 4,
+      "monto_corresponde": 2000
+    }
+  ]
+}
+
+### Gasto de Otros
+POST {{baseUrl}}/viajes/{{viajeId}}/gastos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_pagador": 1,
+  "descripcion": "Compra de equipo de camping",
+  "monto_ars": 35000,
+  "categoria": "otros",
+  "tipo_gasto": "grupal",
+  "tipo_division": "todos_miembros",
+  "fecha": "2026-01-04"
+}
+
+### ============================================
+### CASOS ESPECIALES
+### ============================================
+
+### Gasto Multimoneda
+POST {{baseUrl}}/viajes/{{viajeId}}/gastos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_pagador": 1,
+  "descripcion": "Tour internacional pagado en USD",
+  "monto_ars": 75000,
+  "monto_clp": 45000,
+  "monto_usd": 150,
+  "categoria": "entradas",
+  "tipo_gasto": "grupal",
+  "tipo_division": "todos_miembros",
+  "fecha": "2026-01-06"
+}
+
+### Gasto con Actividad Referenciada
+POST {{baseUrl}}/viajes/{{viajeId}}/gastos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_pagador": 1,
+  "descripcion": "Pago de trekking guiado",
+  "monto_ars": 40000,
+  "categoria": "entradas",
+  "tipo_gasto": "actividad_compartida",
+  "tipo_division": "miembros_especificos",
+  "fecha": "2026-01-05",
+  "id_actividad_referencia": 1,
+  "miembros_asignados": [
+    {
+      "id_miembro_viaje": 2,
+      "monto_corresponde": 20000
+    },
+    {
+      "id_miembro_viaje": 3,
+      "monto_corresponde": 20000
+    }
+  ]
+}
+
+### Gasto Hijo (subdivisión de gasto padre)
+POST {{baseUrl}}/viajes/{{viajeId}}/gastos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_usuario_pagador": 1,
+  "descripcion": "Propina del gasto principal",
+  "monto_ars": 4500,
+  "categoria": "comida",
+  "tipo_gasto": "grupal",
+  "tipo_division": "todos_miembros",
+  "fecha": "2026-01-05",
+  "id_gasto_padre": 1
+}
+
+### Cancelar Gasto
+PUT {{baseUrl}}/viajes/{{viajeId}}/gastos/{{gastoId}}/estado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "estado_gasto": "cancelado"
+}
+
+### Marcar como Pendiente de Confirmación
+PUT {{baseUrl}}/viajes/{{viajeId}}/gastos/{{gastoId}}/estado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "estado_gasto": "pendiente"
+}

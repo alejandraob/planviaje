@@ -1,157 +1,448 @@
-# Plan Viaje Backend API
+# Plan Viaje - Backend API
 
-Backend REST API for Plan Viaje application built with Node.js, Express, and PostgreSQL.
+Sistema de gestión de viajes grupales con seguimiento de gastos, miembros y actividades.
 
-## 🚀 Quick Start
+## 🚀 Inicio Rápido
 
-### Prerequisites
-- Node.js 18+
-- PostgreSQL 15+
-- npm or yarn
+### Prerrequisitos
+- Node.js 20.x
+- PostgreSQL 15
+- npm o yarn
 
-### Installation
+### Instalación
 
-1. Install dependencies:
 ```bash
+# Instalar dependencias
 npm install
-```
 
-2. Configure environment variables:
-   - Copy `.env.example` to `.env`
-   - Update with your database credentials and API keys
+# Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tus credenciales
 
-3. Start the server:
-```bash
-# Development mode with auto-reload
+# Crear tablas en la base de datos
+npm run db:reset
+
+# Crear usuario de prueba
+npm run create-test-user
+
+# Iniciar servidor de desarrollo
 npm run dev
-
-# Production mode
-npm start
 ```
 
-The server will run on `http://localhost:3001`
+El servidor estará corriendo en `http://localhost:3001`
 
-## 📁 Project Structure
+---
+
+## 📚 Documentación
+
+### Documentación General
+- **[PROGRESO_DESARROLLO.md](PROGRESO_DESARROLLO.md)** - Estado actual del proyecto y módulos completados
+- **[GUIA_TESTING.md](GUIA_TESTING.md)** - Guía completa para testing
+- **[PASOS_PARA_PROBAR.md](PASOS_PARA_PROBAR.md)** - Guía rápida de inicio
+
+### Documentación de APIs
+- **[API_VIAJES.md](API_VIAJES.md)** - Endpoints del módulo de Viajes (6 endpoints)
+- **[API_MIEMBROS.md](API_MIEMBROS.md)** - Endpoints del módulo de Miembros (8 endpoints)
+
+### Archivos de Testing
+- `tests/auth.http` - Tests de autenticación
+- `tests/viajes.http` - Tests de viajes
+- `tests/miembros.http` - Tests de miembros
+
+---
+
+## 🎯 Características Principales
+
+### ✅ Módulos Implementados
+
+#### 1. Autenticación (5 endpoints)
+- Registro con Firebase
+- Login de desarrollo (sin Firebase)
+- Obtener usuario actual
+- Refrescar tokens
+- Logout
+
+#### 2. Viajes (6 endpoints)
+- Crear viajes con cronograma automático
+- Listar viajes con filtros y paginación
+- Ver detalles completos
+- Actualizar viajes (solo admins)
+- Eliminar viajes (solo admin principal)
+- Estadísticas del viaje
+
+#### 3. Miembros (8 endpoints)
+- Invitar miembros al viaje
+- Listar miembros con filtros
+- Ver detalles de miembros
+- Actualizar información
+- Remover miembros
+- Pausar/Reanudar participación
+- Cambiar admin secundario
+
+### ⏳ Módulos Pendientes
+- Franjas (períodos en diferentes ubicaciones)
+- Alojamientos (reservas de hospedaje)
+- Actividades (eventos del viaje)
+- Gastos (tracking de gastos compartidos)
+- Subgrupos (grupos dentro del viaje)
+- Deudas (cálculo automático)
+- Pagos (confirmaciones)
+- Notificaciones
+
+---
+
+## 🗄️ Base de Datos
+
+### PostgreSQL - 18 Tablas Creadas
+- `usuarios` - Usuarios del sistema
+- `viajes` - Viajes principales
+- `miembros_viaje` - Miembros de cada viaje
+- `cronograma` - Timeline del viaje
+- `franjas` - Períodos en ubicaciones
+- `alojamientos` - Reservas de hospedaje
+- `actividades` - Actividades del viaje
+- `subgrupos` - Grupos dentro del viaje
+- `subgrupo_miembros` - Miembros de subgrupos
+- `gastos` - Gastos del grupo
+- `gastos_subgrupo` - Gastos de subgrupos
+- `deudas` - Deudas entre usuarios
+- `deudas_subgrupo` - Deudas de subgrupo
+- `pagos` - Confirmaciones de pago
+- `notificaciones` - Notificaciones
+- `auditoria` - Log de auditoría
+- `configuracion_viaje` - Configuración
+- `tasas_cambio` - Tasas de cambio
+
+---
+
+## 🛠️ Stack Técnico
+
+### Backend
+- **Node.js 20.x** - Runtime
+- **Express.js 4.x** - Framework web
+- **Sequelize 6.x** - ORM
+- **PostgreSQL 15** - Base de datos
+
+### Autenticación & Seguridad
+- **Firebase Admin SDK** - Autenticación
+- **JWT** - Tokens propios (access + refresh)
+- **bcrypt** - Hash de passwords
+- **Helmet** - Security headers
+- **CORS** - Cross-origin requests
+- **Express Rate Limit** - Limitación de requests
+
+### Validación & Logging
+- **Joi** - Validación de schemas
+- **Winston** - Logging avanzado
+- **Morgan** - HTTP request logger
+
+### Desarrollo
+- **Nodemon** - Auto-reload en desarrollo
+- **dotenv** - Variables de entorno
+
+---
+
+## 📁 Estructura del Proyecto
 
 ```
 backend/
 ├── src/
-│   ├── config/          # Configuration files
+│   ├── config/          # Configuración (DB, Firebase, env)
 │   │   ├── database.js
-│   │   ├── environment.js
 │   │   ├── firebase.js
+│   │   ├── environment.js
 │   │   └── constants.js
-│   ├── models/          # Sequelize models
+│   │
+│   ├── models/          # 18 modelos Sequelize
+│   │   ├── index.js
 │   │   ├── Usuario.js
-│   │   └── index.js
-│   ├── routes/          # API routes
-│   │   ├── auth.routes.js
-│   │   └── index.js
-│   ├── controllers/     # Route controllers
-│   │   └── authController.js
-│   ├── services/        # Business logic
-│   ├── middleware/      # Express middleware
+│   │   ├── Viaje.js
+│   │   ├── MiembroViaje.js
+│   │   └── ...
+│   │
+│   ├── controllers/     # Controladores HTTP
+│   │   ├── authController.js ✅
+│   │   ├── viajesController.js ✅
+│   │   └── miembrosController.js ✅
+│   │
+│   ├── services/        # Lógica de negocio
+│   │   ├── viajesService.js ✅
+│   │   └── miembrosService.js ✅
+│   │
+│   ├── routes/          # Rutas de la API
+│   │   ├── index.js
+│   │   ├── auth.routes.js ✅
+│   │   ├── viajes.routes.js ✅
+│   │   └── miembros.routes.js ✅
+│   │
+│   ├── middleware/      # Middleware personalizado
 │   │   ├── auth.js
-│   │   ├── errorHandler.js
 │   │   ├── validation.js
+│   │   ├── errorHandler.js
 │   │   ├── cors.js
 │   │   └── rateLimit.js
-│   ├── utils/           # Utilities
-│   │   ├── logger.js
+│   │
+│   ├── utils/           # Utilidades
 │   │   ├── jwt.js
 │   │   ├── bcrypt.js
-│   │   ├── validators.js
-│   │   └── errors.js
-│   └── app.js           # Express app setup
-├── server.js            # Server entry point
-├── .env                 # Environment variables
-├── .env.example         # Environment template
-└── package.json
+│   │   ├── logger.js
+│   │   ├── errors.js
+│   │   └── validationSchemas.js
+│   │
+│   ├── scripts/         # Scripts de utilidad
+│   │   ├── syncDatabase.js
+│   │   ├── resetDatabase.js
+│   │   └── createTestUser.js
+│   │
+│   ├── app.js           # Configuración de Express
+│   └── server.js        # Punto de entrada
+│
+├── tests/               # Archivos de testing
+│   ├── auth.http ✅
+│   ├── viajes.http ✅
+│   └── miembros.http ✅
+│
+├── logs/                # Logs de Winston
+├── .env                 # Variables de entorno
+├── .gitignore
+├── package.json
+└── README.md            # Este archivo
 ```
 
-## 🔌 API Endpoints
+---
 
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login with Firebase token
-- `GET /api/auth/me` - Get current user
-- `POST /api/auth/refresh` - Refresh access token
-- `POST /api/auth/logout` - Logout user
+## 🔑 Variables de Entorno
 
-### Health Check
-- `GET /api/health` - API health status
-- `GET /` - API information
+```env
+# Server
+NODE_ENV=development
+PORT=3001
 
-## 🗄️ Database
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=plan_viaje_dev
+DB_USER=postgres
+DB_PASSWORD=your_password
 
-The application uses PostgreSQL with Sequelize ORM.
+# JWT
+JWT_SECRET=your_jwt_secret
+JWT_ACCESS_EXPIRATION=24h
+JWT_REFRESH_EXPIRATION=30d
 
-### Connection
-Database connection is configured in `src/config/database.js` using environment variables.
+# Firebase
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_PRIVATE_KEY=your_private_key
+FIREBASE_CLIENT_EMAIL=your_client_email
 
-### Models
-Models are defined in `src/models/` and use Sequelize.
+# Frontend
+FRONTEND_URL=http://localhost:5173
 
-## 🔐 Authentication
+# External APIs
+MERCADOPAGO_ACCESS_TOKEN=your_token
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
 
-Authentication uses Firebase Admin SDK combined with JWT tokens:
+---
 
-1. Client authenticates with Firebase
-2. Client sends Firebase ID token to backend
-3. Backend verifies token and issues JWT
-4. JWT is used for subsequent API requests
+## 📜 Scripts Disponibles
 
-## 🛡️ Security Features
+```bash
+# Desarrollo
+npm run dev              # Servidor con auto-reload (nodemon)
+npm start                # Servidor en producción
 
-- Helmet.js for security headers
-- CORS configuration
-- Rate limiting
-- JWT token authentication
-- Password hashing with bcrypt
-- Input validation with Joi
-- Error handling
+# Base de datos
+npm run db:sync          # Sincronizar modelos sin borrar datos
+npm run db:reset         # Recrear todas las tablas (⚠️ BORRA TODO)
+npm run create-test-user # Crear usuario de prueba
 
-## 📝 Environment Variables
+# Testing
+npm test                 # Ejecutar tests con Jest
 
-See `.env.example` for required environment variables:
-- Database configuration
-- JWT secrets
-- Firebase credentials
-- Third-party API keys (Mercado Pago, Cloudinary, etc.)
+# Migraciones (si se usan)
+npm run migrate          # Ejecutar migraciones
+npm run migrate:undo     # Revertir última migración
+```
+
+---
 
 ## 🧪 Testing
 
+### Usando REST Client (VS Code)
+
+1. Instala la extensión "REST Client" en VS Code
+2. Abre cualquier archivo `.http` en la carpeta `tests/`
+3. Haz clic en "Send Request" sobre cada petición
+
+### Flujo de Testing Completo
+
 ```bash
-npm test
+# 1. Resetear base de datos
+npm run db:reset
+
+# 2. Crear usuario de prueba
+npm run create-test-user
+
+# 3. Iniciar servidor
+npm run dev
+
+# 4. Abrir tests/auth.http
+# 5. Ejecutar DEV LOGIN
+# 6. Copiar el accessToken
+# 7. Pegar token en tests/viajes.http y tests/miembros.http
+# 8. Ejecutar los tests
 ```
 
-## 📊 Logging
+---
 
-Logs are stored in `logs/` directory:
-- `combined.log` - All logs
-- `error.log` - Error logs only
-- `exceptions.log` - Uncaught exceptions
-- `rejections.log` - Unhandled promise rejections
+## 🔐 Autenticación
 
-## 🚀 Deployment
+### Desarrollo (Recomendado para testing)
+```http
+POST /api/auth/dev-login
+Content-Type: application/json
 
-1. Set `NODE_ENV=production` in environment
-2. Configure production database
-3. Set secure JWT secret
-4. Configure CORS for production domain
-5. Set up process manager (PM2)
+{
+  "email": "test@example.com",
+  "password": "cualquier_cosa"
+}
+```
 
-## 📚 Documentation
+### Producción (con Firebase)
+```http
+POST /api/auth/login
+Content-Type: application/json
 
-API documentation will be available at `/api/docs` (to be implemented with Swagger).
+{
+  "idToken": "FIREBASE_ID_TOKEN"
+}
+```
 
-## 🤝 Contributing
+Ambos retornan:
+```json
+{
+  "success": true,
+  "data": {
+    "user": { ... },
+    "accessToken": "...",
+    "refreshToken": "..."
+  }
+}
+```
 
-1. Create a feature branch
-2. Make your changes
-3. Write/update tests
-4. Submit a pull request
+---
 
-## 📄 License
+## 📊 Endpoints Disponibles
+
+### Auth (5 endpoints)
+```
+POST   /api/auth/register
+POST   /api/auth/login
+POST   /api/auth/dev-login  (development only)
+GET    /api/auth/me
+POST   /api/auth/refresh
+POST   /api/auth/logout
+```
+
+### Viajes (6 endpoints)
+```
+POST   /api/viajes
+GET    /api/viajes
+GET    /api/viajes/:id
+PUT    /api/viajes/:id
+DELETE /api/viajes/:id
+GET    /api/viajes/:id/estadisticas
+```
+
+### Miembros (8 endpoints)
+```
+POST   /api/viajes/:id/miembros
+GET    /api/viajes/:id/miembros
+GET    /api/viajes/:id/miembros/:memberId
+PUT    /api/viajes/:id/miembros/:memberId
+DELETE /api/viajes/:id/miembros/:memberId
+PUT    /api/viajes/:id/miembros/:memberId/pausar
+PUT    /api/viajes/:id/miembros/:memberId/reanudar
+PUT    /api/viajes/:id/admin-secundario
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Error: "no existe la relación usuarios"
+```bash
+npm run db:reset
+```
+
+### Error: "Invalid token"
+```bash
+# Genera un nuevo token con:
+POST /api/auth/dev-login
+```
+
+### Error: "User not found" en dev-login
+```bash
+npm run create-test-user
+```
+
+### Servidor no inicia
+```bash
+# Verifica que PostgreSQL esté corriendo
+# Verifica las credenciales en .env
+# Verifica que el puerto 3001 esté disponible
+```
+
+---
+
+## 🤝 Contribución
+
+1. Sigue el patrón MVC + Services existente
+2. Crea schemas de validación con Joi
+3. Documenta cada endpoint en archivos API_*.md
+4. Crea archivo .http para testing
+5. Actualiza PROGRESO_DESARROLLO.md
+
+---
+
+## 📝 Licencia
 
 MIT
+
+---
+
+## 👥 Usuarios de Prueba
+
+- **test@example.com** (id: 1) - Admin principal
+- **maria@example.com** (id: 2) - Usuario regular
+
+Ambos pueden usar `/auth/dev-login` con cualquier password.
+
+---
+
+## 🎯 Roadmap
+
+- [x] Infraestructura base
+- [x] Autenticación
+- [x] Módulo de Viajes
+- [x] Módulo de Miembros
+- [ ] Módulo de Franjas
+- [ ] Módulo de Gastos
+- [ ] Módulo de Deudas
+- [ ] Módulo de Alojamientos
+- [ ] Módulo de Actividades
+- [ ] Módulo de Subgrupos
+- [ ] Módulo de Pagos
+- [ ] Sistema de Notificaciones
+- [ ] Tests unitarios (Jest)
+- [ ] Tests E2E
+- [ ] Documentación con Swagger
+- [ ] Docker setup
+- [ ] CI/CD
+
+---
+
+**Para más detalles, consulta [PROGRESO_DESARROLLO.md](PROGRESO_DESARROLLO.md)**

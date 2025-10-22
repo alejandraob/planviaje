@@ -1,0 +1,260 @@
+### Variables
+@baseUrl = http://localhost:3001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3Mjk2MTAzNjIsImV4cCI6MTcyOTY5Njc2Mn0.RzWxPaKkPx7Y7v8GQZvKp2wDGxXqLGb8pP3VKmN2YhY
+@viajeId = 4
+@gastoId = 1
+@deudaId = 1
+
+### ============================================
+### DEUDAS
+### ============================================
+
+### 1. Crear Deuda Simple
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_acreedor": 1,
+  "id_deudor": 2,
+  "id_gasto": {{gastoId}},
+  "monto_ars": 7500,
+  "monto_clp": 4500,
+  "monto_usd": 15,
+  "descripcion": "Parte de cena grupal",
+  "fecha_vencimiento": "2026-02-15"
+}
+
+### 2. Crear Deuda de Alojamiento
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_acreedor": 1,
+  "id_deudor": 3,
+  "id_gasto": {{gastoId}},
+  "monto_ars": 30000,
+  "descripcion": "Parte proporcional del hospedaje",
+  "observacion": "Pagar antes del check-out",
+  "fecha_vencimiento": "2026-01-10"
+}
+
+### 3. Crear Deuda de Transporte
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_acreedor": 1,
+  "id_deudor": 4,
+  "id_gasto": {{gastoId}},
+  "monto_ars": 20000,
+  "monto_usd": 40,
+  "descripcion": "Parte del alquiler de auto",
+  "fecha_vencimiento": "2026-01-20"
+}
+
+### 4. Listar Todas las Deudas
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas
+Authorization: Bearer {{token}}
+
+### 5. Listar Deudas con Filtros
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas?estado=pendiente&page=1&limit=10
+Authorization: Bearer {{token}}
+
+### 6. Listar Deudas por Acreedor
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas?id_acreedor=1
+Authorization: Bearer {{token}}
+
+### 7. Listar Deudas por Deudor
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas?id_deudor=2
+Authorization: Bearer {{token}}
+
+### 8. Listar Deudas de un Gasto Específico
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas?id_gasto={{gastoId}}
+Authorization: Bearer {{token}}
+
+### 9. Obtener Detalles de Deuda con Balance
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}
+Authorization: Bearer {{token}}
+
+### 10. Actualizar Deuda
+PUT {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "monto_ars": 8000,
+  "observacion": "Monto ajustado según recálculo",
+  "fecha_vencimiento": "2026-02-20"
+}
+
+### 11. Actualizar Estado de Deuda
+PUT {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/estado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "estado": "pagada"
+}
+
+### 12. Obtener Estadísticas Globales
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/estadisticas
+Authorization: Bearer {{token}}
+
+### 13. Obtener Resumen Personalizado del Usuario
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/resumen
+Authorization: Bearer {{token}}
+
+### 14. Eliminar Deuda (Solo Admin, sin pagos)
+DELETE {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}
+Authorization: Bearer {{token}}
+
+### ============================================
+### CASOS DE USO ESPECIALES
+### ============================================
+
+### Deuda Multimoneda
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_acreedor": 1,
+  "id_deudor": 2,
+  "id_gasto": {{gastoId}},
+  "monto_ars": 15000,
+  "monto_clp": 9000,
+  "monto_usd": 30,
+  "descripcion": "Deuda convertida a múltiples monedas",
+  "fecha_vencimiento": "2026-02-01"
+}
+
+### Deuda con Fecha de Vencimiento Próxima
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_acreedor": 1,
+  "id_deudor": 3,
+  "id_gasto": {{gastoId}},
+  "monto_ars": 12000,
+  "descripcion": "Deuda urgente - Pago inmediato",
+  "fecha_vencimiento": "2026-01-08",
+  "observacion": "Pagar en efectivo antes del viernes"
+}
+
+### Marcar Deuda como Cancelada
+PUT {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/estado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "estado": "cancelada"
+}
+
+### Pausar Deuda Temporalmente
+PUT {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/estado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "estado": "pausada"
+}
+
+### Reactivar Deuda Pausada
+PUT {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/estado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "estado": "pendiente"
+}
+
+### ============================================
+### CONSULTAS DE INFORMACIÓN
+### ============================================
+
+### Ver Balance Detallado
+# El endpoint GET /deudas/:id retorna automáticamente:
+# - monto_original: Monto total de la deuda
+# - monto_pagado: Suma de pagos confirmados
+# - monto_pendiente: Diferencia (original - pagado)
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}
+Authorization: Bearer {{token}}
+
+### Ver Resumen de Usuario
+# Retorna:
+# - debts_owed: Deudas que el usuario debe (como deudor)
+# - debts_to_receive: Deudas que le deben al usuario (como acreedor)
+# - balance: Diferencia neta
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/resumen
+Authorization: Bearer {{token}}
+
+### Ver Estadísticas del Viaje
+# Retorna totales por moneda y por estado
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/estadisticas
+Authorization: Bearer {{token}}
+
+### ============================================
+### FLUJO COMPLETO
+### ============================================
+
+### PASO 1: Crear el gasto grupal
+# POST /api/viajes/4/gastos
+# (Juan paga $15,000 por cena para 2 personas)
+
+### PASO 2: Crear deuda automática
+# El sistema calcula: $15,000 / 2 = $7,500 por persona
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_acreedor": 1,
+  "id_deudor": 2,
+  "id_gasto": {{gastoId}},
+  "monto_ars": 7500,
+  "descripcion": "Mitad de la cena",
+  "fecha_vencimiento": "2026-01-31"
+}
+
+### PASO 3: Verificar balance
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}
+Authorization: Bearer {{token}}
+
+### PASO 4: Usuario consulta sus deudas
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/resumen
+Authorization: Bearer {{token}}
+
+### PASO 5: Marcar como pagada
+# (Cuando se registre el pago en el módulo de Pagos)
+PUT {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/estado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "estado": "pagada"
+}
+
+### ============================================
+### FILTROS COMBINADOS
+### ============================================
+
+### Deudas pendientes de un usuario específico
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas?id_deudor=2&estado=pendiente
+Authorization: Bearer {{token}}
+
+### Deudas a recibir de un usuario
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas?id_acreedor=1&estado=pendiente
+Authorization: Bearer {{token}}
+
+### Deudas de un gasto pagadas
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas?id_gasto={{gastoId}}&estado=pagada
+Authorization: Bearer {{token}}
+
+### Todas las deudas paginadas
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas?page=1&limit=20
+Authorization: Bearer {{token}}

@@ -36,7 +36,7 @@ GET {{baseUrl}}/viajes?estado=planificacion&tipo=amigos&page=1&limit=10
 Authorization: Bearer {{token}}
 
 ### 4. Get specific trip details
-GET {{baseUrl}}/viajes/1
+GET {{baseUrl}}/viajes/4
 Authorization: Bearer {{token}}
 
 ### 5. Update trip
@@ -51,11 +51,11 @@ Authorization: Bearer {{token}}
 }
 
 ### 6. Get trip statistics
-GET {{baseUrl}}/viajes/1/estadisticas
+GET {{baseUrl}}/viajes/4/estadisticas
 Authorization: Bearer {{token}}
 
 ### 7. Change trip state to "en_curso"
-PUT {{baseUrl}}/viajes/1
+PUT {{baseUrl}}/viajes/4
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -125,7 +125,7 @@ GET {{baseUrl}}/viajes/999
 Authorization: Bearer {{token}}
 
 ### Update trip without admin permissions
-PUT {{baseUrl}}/viajes/2
+PUT {{baseUrl}}/viajes/4
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

@@ -1,0 +1,264 @@
+### Variables
+@baseUrl = http://localhost:3001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3Mjk2MTAzNjIsImV4cCI6MTcyOTY5Njc2Mn0.RzWxPaKkPx7Y7v8GQZvKp2wDGxXqLGb8pP3VKmN2YhY
+@viajeId = 4
+@deudaId = 1
+@pagoId = 1
+
+### ============================================
+### PAGOS - Gestión de Pagos de Deudas
+### ============================================
+
+### 1. Registrar Pago (Deudor)
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "monto_ars": 5000,
+  "metodo_pago": "transferencia",
+  "comprobante_url": "https://ejemplo.com/comprobante.jpg",
+  "observacion": "Pago parcial de la deuda"
+}
+
+### 2. Listar Pagos de una Deuda
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos
+Authorization: Bearer {{token}}
+
+### 3. Listar Pagos con Filtros
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos?estado_pago=pendiente&page=1&limit=10
+Authorization: Bearer {{token}}
+
+### 4. Obtener Detalles de un Pago
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos/{{pagoId}}
+Authorization: Bearer {{token}}
+
+### 5. Confirmar Pago (Acreedor o Admin)
+PUT {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos/{{pagoId}}/confirmar
+Authorization: Bearer {{token}}
+
+### 6. Rechazar Pago (Acreedor o Admin)
+PUT {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos/{{pagoId}}/rechazar
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "motivo_rechazo": "El comprobante no es válido, por favor enviar uno nuevo"
+}
+
+### 7. Eliminar Pago (Solo Pendientes, Solo Deudor)
+DELETE {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos/{{pagoId}}
+Authorization: Bearer {{token}}
+
+### 8. Obtener Estadísticas de Pagos
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos/estadisticas
+Authorization: Bearer {{token}}
+
+### ============================================
+### EJEMPLOS POR MÉTODO DE PAGO
+### ============================================
+
+### Pago en Efectivo
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "monto_ars": 3000,
+  "metodo_pago": "efectivo",
+  "observacion": "Pago en efectivo realizado el 05/01/2026"
+}
+
+### Pago con Tarjeta
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "monto_ars": 4500,
+  "metodo_pago": "tarjeta",
+  "comprobante_url": "https://ejemplo.com/recibo-tarjeta.pdf",
+  "observacion": "Pago con tarjeta Visa terminada en 1234"
+}
+
+### Pago por Transferencia (Multimoneda)
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "monto_ars": 5000,
+  "monto_clp": 3000,
+  "monto_usd": 10,
+  "metodo_pago": "transferencia",
+  "comprobante_url": "https://ejemplo.com/transferencia.jpg",
+  "observacion": "Transferencia bancaria internacional"
+}
+
+### ============================================
+### FLUJO COMPLETO DE PAGO
+### ============================================
+
+### Paso 1: Deudor registra pago parcial (estado: pendiente)
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "monto_ars": 2500,
+  "metodo_pago": "transferencia",
+  "comprobante_url": "https://ejemplo.com/pago1.jpg",
+  "observacion": "Primer pago parcial - 50%"
+}
+
+### Paso 2: Acreedor revisa el pago
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos/{{pagoId}}
+Authorization: Bearer {{token}}
+
+### Paso 3: Acreedor confirma el pago
+PUT {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos/{{pagoId}}/confirmar
+Authorization: Bearer {{token}}
+
+### Paso 4: Ver estado actualizado de la deuda
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}
+Authorization: Bearer {{token}}
+
+### Paso 5: Deudor registra segundo pago (completar deuda)
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "monto_ars": 2500,
+  "metodo_pago": "transferencia",
+  "comprobante_url": "https://ejemplo.com/pago2.jpg",
+  "observacion": "Segundo pago - Completa el 100%"
+}
+
+### Paso 6: Acreedor confirma segundo pago (deuda pasa a "pagada")
+PUT {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos/{{pagoId}}  /confirmar
+Authorization: Bearer {{token}}
+
+### ============================================
+### CASOS DE USO ESPECIALES
+### ============================================
+
+### Pago Total de una Deuda
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "monto_ars": 10000,
+  "metodo_pago": "transferencia",
+  "comprobante_url": "https://ejemplo.com/pago-completo.jpg",
+  "observacion": "Pago total de la deuda"
+}
+
+### Listar Solo Pagos Pendientes
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos?estado_pago=pendiente
+Authorization: Bearer {{token}}
+
+### Listar Solo Pagos Confirmados
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos?estado_pago=confirmado
+Authorization: Bearer {{token}}
+
+### Listar Solo Pagos Rechazados
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos?estado_pago=rechazado
+Authorization: Bearer {{token}}
+
+### Filtrar por Método de Pago
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos?metodo_pago=transferencia
+Authorization: Bearer {{token}}
+
+### Rechazar Pago con Motivo
+PUT {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos/{{pagoId}}/rechazar
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "motivo_rechazo": "El monto no coincide con el comprobante adjunto. Por favor verificar."
+}
+
+### ============================================
+### VALIDACIONES Y ERRORES ESPERADOS
+### ============================================
+
+### Error: Pago excede el monto pendiente
+# Debe fallar si el pago es mayor que lo que queda por pagar
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "monto_ars": 999999,
+  "metodo_pago": "transferencia",
+  "observacion": "Este pago debería fallar - monto excesivo"
+}
+
+### Error: Solo el deudor puede registrar pagos
+# Debe fallar si el usuario no es el deudor
+POST {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "monto_ars": 1000,
+  "metodo_pago": "efectivo"
+}
+
+### Error: Solo el acreedor puede confirmar pagos
+# Debe fallar si el usuario no es el acreedor ni admin
+PUT {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos/{{pagoId}}/confirmar
+Authorization: Bearer {{token}}
+
+### Error: No se puede eliminar pago confirmado
+# Solo pagos pendientes pueden eliminarse
+DELETE {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos/{{pagoId}}
+Authorization: Bearer {{token}}
+
+### Error: No se puede confirmar pago ya confirmado
+PUT {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos/{{pagoId}}/confirmar
+Authorization: Bearer {{token}}
+
+### ============================================
+### CONSULTAS DE ESTADÍSTICAS
+### ============================================
+
+### Estadísticas Detalladas de Pagos
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}/pagos/estadisticas
+Authorization: Bearer {{token}}
+
+### Ver Estado de Deuda con Pagos
+GET {{baseUrl}}/viajes/{{viajeId}}/deudas/{{deudaId}}
+Authorization: Bearer {{token}}
+
+### ============================================
+### NOTAS IMPORTANTES
+### ============================================
+
+# Estados de Pago:
+# - pendiente: Pago registrado pero aún no confirmado por el acreedor
+# - confirmado: Pago confirmado por el acreedor (suma al total pagado)
+# - rechazado: Pago rechazado por el acreedor
+
+# Métodos de Pago:
+# - efectivo: Pago en efectivo
+# - transferencia: Transferencia bancaria
+# - tarjeta: Pago con tarjeta de crédito/débito
+# - otro: Otro método de pago
+
+# Permisos:
+# - Registrar pago: Solo el deudor
+# - Confirmar/Rechazar pago: Solo el acreedor o admin del viaje
+# - Eliminar pago: Solo el deudor (y solo si está pendiente)
+
+# Flujo de Estado de Deuda:
+# - La deuda se marca como "pagada" automáticamente cuando la suma
+#   de pagos confirmados >= monto total de la deuda
+# - Solo los pagos CONFIRMADOS cuentan para el balance
+
+# Multimoneda:
+# - Se puede registrar el mismo pago en múltiples monedas
+# - monto_ars es obligatorio
+# - monto_clp y monto_usd son opcionales

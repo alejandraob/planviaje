@@ -1,0 +1,119 @@
+### Backend API Tests - Miembros
+### Base URL
+@baseUrl = http://localhost:3001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwibm9tYnJlIjoiSnVhbiIsImFwZWxsaWRvIjoiUMOpcmV6IiwiaWF0IjoxNzYwOTY1MDgyLCJleHAiOjE3NjEwNTE0ODJ9.vQxWDZx4LqlqjcTWA8UOF0vAZNuRJJErYOiXellcY3Q
+@viajeId = 4
+
+###
+### ==================== MIEMBROS ENDPOINTS ====================
+###
+
+### 1. Invitar miembro al viaje
+# Primero necesitas crear otro usuario para invitar
+# Por ahora, vamos a invitar al usuario test@example.com (ya existe)
+POST {{baseUrl}}/viajes/{{viajeId}}/miembros
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "email": "maria@example.com",
+  "es_menor": false,
+  "presupuesto_maximo_diario": 5000
+}
+
+### 2. Listar todos los miembros del viaje
+GET {{baseUrl}}/viajes/{{viajeId}}/miembros
+Authorization: Bearer {{token}}
+
+### 3. Listar miembros activos
+GET {{baseUrl}}/viajes/{{viajeId}}/miembros?estado_participacion=activo
+Authorization: Bearer {{token}}
+
+### 4. Listar solo admins
+GET {{baseUrl}}/viajes/{{viajeId}}/miembros?rol=admin_principal
+Authorization: Bearer {{token}}
+
+### 5. Obtener detalles de un miembro específico
+GET {{baseUrl}}/viajes/{{viajeId}}/miembros/1
+Authorization: Bearer {{token}}
+
+### 6. Actualizar miembro (cambiar presupuesto)
+PUT {{baseUrl}}/viajes/{{viajeId}}/miembros/2
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "presupuesto_maximo_diario": 7000
+}
+
+### 7. Actualizar miembro (marcar como menor con responsable)
+PUT {{baseUrl}}/viajes/{{viajeId}}/miembros/2
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "es_menor": true,
+  "id_responsable_legal": 1
+}
+
+### 8. Pausar participación de un miembro
+PUT {{baseUrl}}/viajes/{{viajeId}}/miembros/2/pausar
+Authorization: Bearer {{token}}
+
+### 9. Reanudar participación
+PUT {{baseUrl}}/viajes/{{viajeId}}/miembros/2/reanudar
+Authorization: Bearer {{token}}
+
+### 10. Remover miembro del viaje
+DELETE {{baseUrl}}/viajes/{{viajeId}}/miembros/2
+Authorization: Bearer {{token}}
+
+### 11. Cambiar admin secundario
+PUT {{baseUrl}}/viajes/{{viajeId}}/admin-secundario
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id_usuario_nuevo_admin": 2
+}
+
+###
+### ==================== ERROR CASES ====================
+###
+
+### Invitar usuario que no existe
+POST {{baseUrl}}/viajes/{{viajeId}}/miembros
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "email": "noexiste@example.com"
+}
+
+### Invitar usuario que ya es miembro
+POST {{baseUrl}}/viajes/{{viajeId}}/miembros
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "email": "test@example.com"
+}
+
+### Actualizar miembro sin ser admin
+# (Necesitarías usar el token de otro usuario que no sea admin)
+
+### Marcar como menor sin responsable legal
+PUT {{baseUrl}}/viajes/{{viajeId}}/miembros/2
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "es_menor": true
+}
+
+### Intentar remover al admin principal
+DELETE {{baseUrl}}/viajes/{{viajeId}}/miembros/1
+Authorization: Bearer {{token}}
+
+### Cambiar admin secundario sin ser admin principal
+# (Necesitarías usar el token de un admin secundario o miembro regular)

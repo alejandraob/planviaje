@@ -1,0 +1,354 @@
+### Variables
+@baseUrl = http://localhost:3001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3Mjk2MTAzNjIsImV4cCI6MTcyOTY5Njc2Mn0.RzWxPaKkPx7Y7v8GQZvKp2wDGxXqLGb8pP3VKmN2YhY
+@viajeId = 4
+@subgrupoId = 1
+@miembroId = 2
+
+### ============================================
+### SUBGRUPOS
+### ============================================
+
+### 1. Crear Subgrupo
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Grupo Trekking",
+  "descripcion": "Subgrupo para actividades de montañismo",
+  "id_representante": 2,
+  "miembros": [2, 3, 5]
+}
+
+### 2. Crear Subgrupo sin Descripción
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Grupo Playa",
+  "id_representante": 3,
+  "miembros": [3, 4, 6]
+}
+
+### 3. Crear Subgrupo Grande
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Grupo Actividades Culturales",
+  "descripcion": "Visitas a museos, galerías y eventos culturales",
+  "id_representante": 4,
+  "miembros": [2, 3, 4, 5, 6, 7]
+}
+
+### 4. Listar Todos los Subgrupos
+GET {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+
+### 5. Listar Subgrupos con Paginación
+GET {{baseUrl}}/viajes/{{viajeId}}/subgrupos?page=1&limit=5
+Authorization: Bearer {{token}}
+
+### 6. Listar Subgrupos Activos
+GET {{baseUrl}}/viajes/{{viajeId}}/subgrupos?estado=activo
+Authorization: Bearer {{token}}
+
+### 7. Obtener Detalles de Subgrupo
+GET {{baseUrl}}/viajes/{{viajeId}}/subgrupos/{{subgrupoId}}
+Authorization: Bearer {{token}}
+
+### 8. Actualizar Nombre del Subgrupo
+PUT {{baseUrl}}/viajes/{{viajeId}}/subgrupos/{{subgrupoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Grupo Trekking Avanzado"
+}
+
+### 9. Actualizar Descripción
+PUT {{baseUrl}}/viajes/{{viajeId}}/subgrupos/{{subgrupoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "descripcion": "Subgrupo especializado en montañismo de alta dificultad"
+}
+
+### 10. Cambiar Representante
+PUT {{baseUrl}}/viajes/{{viajeId}}/subgrupos/{{subgrupoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_representante": 5
+}
+
+### 11. Actualización Completa
+PUT {{baseUrl}}/viajes/{{viajeId}}/subgrupos/{{subgrupoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Grupo Aventura Extrema",
+  "descripcion": "Actividades de alto riesgo y adrenalina",
+  "id_representante": 3
+}
+
+### 12. Agregar Miembro al Subgrupo
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos/{{subgrupoId}}/miembros
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_miembro_viaje": 7
+}
+
+### 13. Agregar Otro Miembro
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos/{{subgrupoId}}/miembros
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_miembro_viaje": 8
+}
+
+### 14. Remover Miembro del Subgrupo
+DELETE {{baseUrl}}/viajes/{{viajeId}}/subgrupos/{{subgrupoId}}/miembros/{{miembroId}}
+Authorization: Bearer {{token}}
+
+### 15. Eliminar Subgrupo (Solo Admin)
+DELETE {{baseUrl}}/viajes/{{viajeId}}/subgrupos/{{subgrupoId}}
+Authorization: Bearer {{token}}
+
+### ============================================
+### CASOS DE USO ESPECIALES
+### ============================================
+
+### Subgrupo para División de Gastos
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Grupo Hotel Premium",
+  "descripcion": "Miembros que se hospedarán en el hotel de 4 estrellas",
+  "id_representante": 2,
+  "miembros": [2, 3]
+}
+
+### Subgrupo para Actividades Específicas
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Grupo Buceo",
+  "descripcion": "Certificados para buceo avanzado",
+  "id_representante": 4,
+  "miembros": [4, 5, 6]
+}
+
+### Subgrupo Familiar
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Familia González",
+  "descripcion": "Núcleo familiar con 2 adultos y 1 menor",
+  "id_representante": 2,
+  "miembros": [2, 7, 8]
+}
+
+### Subgrupo de Transporte
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Auto 1",
+  "descripcion": "Pasajeros del primer vehículo",
+  "id_representante": 3,
+  "miembros": [3, 4, 5, 6]
+}
+
+### ============================================
+### CONSULTAS Y FILTROS
+### ============================================
+
+### Ver Estadísticas del Subgrupo
+# Automáticamente incluye:
+# - total_miembros
+# - total_gastos asociados
+# - total_deudas asociadas
+GET {{baseUrl}}/viajes/{{viajeId}}/subgrupos/{{subgrupoId}}
+Authorization: Bearer {{token}}
+
+### Listar con Detalles Completos
+# Incluye representante y todos los miembros con sus usuarios
+GET {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+
+### Filtrar por Estado
+GET {{baseUrl}}/viajes/{{viajeId}}/subgrupos?estado=pausado
+Authorization: Bearer {{token}}
+
+### ============================================
+### GESTIÓN DE ESTADOS
+### ============================================
+
+### Pausar Subgrupo (mediante actualización)
+# Nota: El estado se gestiona a nivel de base de datos
+# Para cambiar estado, actualizar directamente en la DB o
+# agregar endpoint específico
+
+### ============================================
+### FLUJO COMPLETO DE TRABAJO
+### ============================================
+
+### PASO 1: Crear subgrupo inicial
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Grupo Excursiones",
+  "descripcion": "Grupo para tours y actividades pagadas",
+  "id_representante": 2,
+  "miembros": [2, 3]
+}
+
+### PASO 2: Ver detalles del subgrupo creado
+GET {{baseUrl}}/viajes/{{viajeId}}/subgrupos/1
+Authorization: Bearer {{token}}
+
+### PASO 3: Agregar más miembros
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos/1/miembros
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_miembro_viaje": 4
+}
+
+### PASO 4: Actualizar información
+PUT {{baseUrl}}/viajes/{{viajeId}}/subgrupos/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "descripcion": "Grupo actualizado con nuevos miembros"
+}
+
+### PASO 5: Listar para verificar cambios
+GET {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+
+### PASO 6: Ver estadísticas finales
+GET {{baseUrl}}/viajes/{{viajeId}}/subgrupos/1
+Authorization: Bearer {{token}}
+
+### ============================================
+### VALIDACIONES Y ERRORES
+### ============================================
+
+### Error: Nombre Duplicado
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Grupo Trekking",
+  "id_representante": 2,
+  "miembros": [2]
+}
+# Debería fallar con 400 si ya existe un subgrupo con ese nombre
+
+### Error: Representante Inválido
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Grupo Test",
+  "id_representante": 999,
+  "miembros": [2]
+}
+# Debería fallar con 400 porque el representante no existe
+
+### Error: Miembro No Pertenece al Viaje
+POST {{baseUrl}}/viajes/{{viajeId}}/subgrupos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Grupo Test 2",
+  "id_representante": 2,
+  "miembros": [2, 999]
+}
+# Debería fallar con 400 porque el miembro 999 no existe
+
+### Error: Eliminar con Gastos Asociados
+DELETE {{baseUrl}}/viajes/{{viajeId}}/subgrupos/1
+Authorization: Bearer {{token}}
+# Debería fallar con 400 si el subgrupo tiene gastos o deudas
+
+### ============================================
+### PERMISOS Y ROLES
+### ============================================
+
+### Editar como Representante
+# El representante del subgrupo puede editar
+PUT {{baseUrl}}/viajes/{{viajeId}}/subgrupos/{{subgrupoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "descripcion": "Actualización por el representante"
+}
+
+### Editar como Admin
+# El admin del viaje puede editar cualquier subgrupo
+PUT {{baseUrl}}/viajes/{{viajeId}}/subgrupos/{{subgrupoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Cambio por admin"
+}
+
+### Eliminar como Admin
+# Solo el admin puede eliminar subgrupos
+DELETE {{baseUrl}}/viajes/{{viajeId}}/subgrupos/{{subgrupoId}}
+Authorization: Bearer {{token}}
+
+### ============================================
+### INFORMACIÓN ADICIONAL
+### ============================================
+
+### Campos Automáticos Retornados:
+# - id_subgrupo
+# - id_viaje
+# - nombre
+# - descripcion
+# - id_representante
+# - fecha_creacion (automático)
+# - estado (default: 'activo')
+# - representante (include con usuario)
+# - miembros (array con detalles)
+# - estadisticas (en detalle)
+
+### Estados Posibles:
+# - activo
+# - pausado
+# - cancelado
+
+### Límites:
+# - Máximo de subgrupos por viaje (configurado en viaje.max_subgrupos)
+# - Nombre único por viaje
+# - Representante debe ser miembro del viaje
+# - Todos los miembros deben pertenecer al viaje

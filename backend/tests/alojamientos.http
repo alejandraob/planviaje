@@ -1,0 +1,254 @@
+@baseUrl = http://localhost:3001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwibm9tYnJlIjoiSnVhbiIsImFwZWxsaWRvIjoiUMOpcmV6IiwiaWF0IjoxNzYwOTgzOTUyLCJleHAiOjE3NjEwNzAzNTJ9.7PoWMXklHtwHmFcoCzyd1uyItTP1LjsAapluif5osdw
+@idViaje = 4
+@idFranja = 1
+@idAlojamiento = 1
+
+### ==================== ALOJAMIENTOS ENDPOINTS ====================
+
+### 1. Create Alojamiento with Franja
+# POST {{baseUrl}}/viajes/:id/alojamientos
+# Creates a new accommodation associated with a franja
+# Auth: Members (any member can create)
+POST {{baseUrl}}/viajes/{{idViaje}}/alojamientos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_franja": 1,
+  "nombre": "Hotel Plaza San Martin",
+  "link_reserva": "https://booking.com/hotel-plaza",
+  "fecha_checkin": "2025-12-31",
+  "hora_checkin": "15:00",
+  "fecha_checkout": "2026-01-05",
+  "hora_checkout": "10:00",
+  "ubicacion_descripcion": "Centro de San Martin de los Andes",
+  "monto_total_ars": 150000,
+  "monto_pagado_ars": 50000,
+  "id_usuario_reserva": 1,
+  "miembros_asignados": [2, 4]
+}
+
+### 2. Create Alojamiento without Franja
+# Create accommodation not linked to any specific franja
+POST {{baseUrl}}/viajes/{{idViaje}}/alojamientos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Hostel Patagonia",
+  "fecha_checkin": "2026-01-16",
+  "fecha_checkout": "2026-01-20",
+  "ubicacion_descripcion": "Villa La Angostura",
+  "monto_total_ars": 80000,
+  "monto_pagado_ars": 0
+}
+
+### 3. List All Alojamientos
+# GET {{baseUrl}}/viajes/:id/alojamientos
+# Lists all accommodations for a trip
+# Auth: Members
+GET {{baseUrl}}/viajes/{{idViaje}}/alojamientos
+Authorization: Bearer {{token}}
+
+### 4. List Alojamientos by Franja
+# Filter accommodations by franja
+GET {{baseUrl}}/viajes/{{idViaje}}/alojamientos?id_franja=1
+Authorization: Bearer {{token}}
+
+### 5. List Alojamientos by Payment Status
+# Filter by payment status
+GET {{baseUrl}}/viajes/{{idViaje}}/alojamientos?estado_pago=parcialmente_pagado
+Authorization: Bearer {{token}}
+
+### 6. List with Pagination
+# Paginated results
+GET {{baseUrl}}/viajes/{{idViaje}}/alojamientos?page=1&limit=10
+Authorization: Bearer {{token}}
+
+### 7. Get Alojamiento Details
+# GET {{baseUrl}}/viajes/:id/alojamientos/:idAlojamiento
+# Gets details of a specific accommodation
+# Auth: Members
+GET {{baseUrl}}/viajes/{{idViaje}}/alojamientos/{{idAlojamiento}}
+Authorization: Bearer {{token}}
+
+### 8. Update Alojamiento
+# PUT {{baseUrl}}/viajes/:id/alojamientos/:idAlojamiento
+# Updates an accommodation
+# Auth: Admin or creator
+PUT {{baseUrl}}/viajes/{{idViaje}}/alojamientos/{{idAlojamiento}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Plaza San Martin - Suite",
+  "ubicacion_descripcion": "Centro de San Martin - Frente al lago",
+  "monto_total_ars": 180000
+}
+
+### 9. Update Payment Amount
+# PUT {{baseUrl}}/viajes/:id/alojamientos/:idAlojamiento/pago
+# Updates payment status
+# Auth: Admin or creator
+PUT {{baseUrl}}/viajes/{{idViaje}}/alojamientos/{{idAlojamiento}}/pago
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "monto_pagado_ars": 100000
+}
+
+### 10. Change Franja Assignment
+# Reassign accommodation to different franja
+PUT {{baseUrl}}/viajes/{{idViaje}}/alojamientos/{{idAlojamiento}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_franja": 3
+}
+
+### 11. Update Assigned Members
+# Update which members are assigned to this accommodation
+PUT {{baseUrl}}/viajes/{{idViaje}}/alojamientos/{{idAlojamiento}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "miembros_asignados": [2, 4]
+}
+
+### 12. Get Alojamientos Statistics
+# GET {{baseUrl}}/viajes/:id/alojamientos/estadisticas
+# Gets statistics for all accommodations in a trip
+# Auth: Members
+GET {{baseUrl}}/viajes/{{idViaje}}/alojamientos/estadisticas
+Authorization: Bearer {{token}}
+
+### 13. Complete Payment
+# Mark accommodation as fully paid
+PUT {{baseUrl}}/viajes/{{idViaje}}/alojamientos/{{idAlojamiento}}/pago
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "monto_pagado_ars": 180000
+}
+
+### 14. Delete Alojamiento
+# DELETE {{baseUrl}}/viajes/:id/alojamientos/:idAlojamiento
+# Deletes an accommodation
+# Auth: Admin or creator
+DELETE {{baseUrl}}/viajes/{{idViaje}}/alojamientos/2
+Authorization: Bearer {{token}}
+
+### ==================== ERROR CASES ====================
+
+### ERROR 1: Create with Dates Outside Franja
+POST {{baseUrl}}/viajes/{{idViaje}}/alojamientos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_franja": 1,
+  "nombre": "Invalid Hotel",
+  "fecha_checkin": "2026-01-10",
+  "fecha_checkout": "2026-01-15",
+  "ubicacion_descripcion": "Should fail - dates outside franja"
+}
+
+### ERROR 2: Create with Invalid Dates
+POST {{baseUrl}}/viajes/{{idViaje}}/alojamientos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Invalid Hotel",
+  "fecha_checkin": "2026-01-20",
+  "fecha_checkout": "2026-01-15",
+  "ubicacion_descripcion": "Should fail - checkout before checkin"
+}
+
+### ERROR 3: Create with Non-existent Franja
+POST {{baseUrl}}/viajes/{{idViaje}}/alojamientos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id_franja": 9999,
+  "nombre": "Invalid Hotel",
+  "fecha_checkin": "2026-01-01",
+  "fecha_checkout": "2026-01-05"
+}
+
+### ERROR 4: Create with Invalid Members
+POST {{baseUrl}}/viajes/{{idViaje}}/alojamientos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Invalid Hotel",
+  "fecha_checkin": "2026-01-01",
+  "fecha_checkout": "2026-01-05",
+  "miembros_asignados": [9999]
+}
+
+### ERROR 5: Update without Permission
+# First, you would need to login as a non-admin, non-creator user
+# Then try to update
+PUT {{baseUrl}}/viajes/{{idViaje}}/alojamientos/{{idAlojamiento}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Unauthorized Update"
+}
+
+### ERROR 6: Get Non-existent Alojamiento
+GET {{baseUrl}}/viajes/{{idViaje}}/alojamientos/9999
+Authorization: Bearer {{token}}
+
+### ERROR 7: Delete Non-existent Alojamiento
+DELETE {{baseUrl}}/viajes/{{idViaje}}/alojamientos/9999
+Authorization: Bearer {{token}}
+
+### ERROR 8: Invalid Payment Amount (Negative)
+PUT {{baseUrl}}/viajes/{{idViaje}}/alojamientos/{{idAlojamiento}}/pago
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "monto_pagado_ars": -1000
+}
+
+### ==================== NOTES ====================
+#
+# Payment Status:
+# - estado_pago is automatically calculated:
+#   - 'no_pagado': monto_pagado_ars = 0
+#   - 'parcialmente_pagado': 0 < monto_pagado_ars < monto_total_ars
+#   - 'pagado': monto_pagado_ars >= monto_total_ars
+#
+# - monto_faltante_ars is automatically calculated:
+#   - monto_faltante_ars = monto_total_ars - monto_pagado_ars
+#
+# Franja Assignment:
+# - id_franja is optional - accommodation can exist without being linked to a franja
+# - If linked to a franja, check-in/check-out dates must be within franja dates
+# - If not linked, dates must be within trip dates
+#
+# Member Assignment:
+# - miembros_asignados is a JSONB array of id_miembro_viaje
+# - All assigned members must exist and belong to the trip
+# - Used to track which trip members will use this accommodation
+#
+# Access Control:
+# - Create: Any trip member
+# - Read: All trip members
+# - Update/Delete: Admin or creator of the accommodation
+#
+# Multi-currency Support:
+# - Can store amounts in ARS, CLP, and USD
+# - Payment tracking currently only for ARS
+# - Future: Support payment tracking for multiple currencies
